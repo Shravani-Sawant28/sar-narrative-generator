@@ -88,5 +88,10 @@ class DataManager:
             "high_risk_count": len(self.customers[self.customers['risk_rating'] == 'High']),
             "medium_risk_count": len(self.customers[self.customers['risk_rating'] == 'Medium']),
             "low_risk_count": len(self.customers[self.customers['risk_rating'] == 'Low']),
-            "risk_distribution": self.customers['risk_rating'].value_counts().to_dict()
+            "risk_distribution": self.customers['risk_rating'].value_counts().to_dict(),
+            # New Metrics
+            "total_alerts": 245,
+            "rejected_alerts": 12,
+            "suspicious_alerts": len(self.customers[self.customers['risk_rating'] == 'High']), # Same as high risk subjects
+            "approved_files": 180
         }
