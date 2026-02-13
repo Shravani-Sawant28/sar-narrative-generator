@@ -1,0 +1,313 @@
+FIU-IND
+Page 1
+DETAILS OF REPORT
+1.1 Date of sending report
+1.2 Is this a replacement to an earlier report ?
+1.3 Date of sending original report if this is a replacement report
+DETAILS OF PRINCIPAL OFFICER 
+2.1 Name of Bank 
+2.2 BSR code   2.3    ID allotted by FIU-IND
+2.4 Category of bank
+2.5 Name of principal officer
+2.6 Designation
+2.7 Address (No., Building)
+2.8 Street/Road
+2.9 Locality
+2.10 City/Town, District
+2.11 State, Country
+2.12 Pin code 2.13  Tel (with STD code)
+2.14 Fax       2.15   E-mail   
+DETAILS OF REPORTING BRANCH / LOCATION 
+3.1 Name of Branch/Location
+3.2 BSR code 3.3    ID allotted by FIU-IND
+3.4 Address (No., Building)
+3.5 Street/Road
+3.6 Locality
+3.7 City/Town, District
+3.8 State, Country
+3.9 Pin code 3.10  Tel (with STD code)
+3.11 Fax  3.12    E-mail   
+Financial Intelligence Unit- India
+Kindly fill in CAPITAL. Read the instructions before filling the form.
+PART 1
+PART 3
+PART 2
+SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+SBA01
+NO YES
+D D M M
+2 0 0
+Y Y Y Y
+D D M M
+2 0 0
+Y Y Y Y
+(Tick a  as applicable)
+DO NOT FILL. FOR FIU-IND USE ONLY.
+(Refer to Instructions)
+FIU-IND Financial Intelligence Unit- India
+SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+Page 2
+LIST OF INDIVIDUALS LINKED TO TRANSACTIONS
+Annexure
+4.1
+4.2
+4.3
+4.4
+4.5
+4.6
+4.7
+4.8
+4.9
+4.10
+4.11
+4.12
+4.13
+4.14
+4.15
+(Details of all individuals should be furnished in prescribed annexure) 
+Number of additional sheets for PART 4 attached  (Leave blank if space provided above is sufficient and no extra sheet is attached)
+LIST OF LEGAL PERSONS/ENTITIES LINKED TO TRANSACTIONS
+Annexure
+5.1
+5.2
+5.3
+5.4
+5.5
+5.6
+5.7
+5.8
+5.9
+5.10
+ (Details of all legal persons/entities should be furnished in prescribed annexure) 
+Number of additional sheets for PART 5 attached  (Leave blank if space provided above is sufficient and no extra sheet is attached)
+PART 5
+Name of legal person/entity
+Kindly fill in CAPITAL. Read the Instructions before filling the form.
+PART 4
+Name of individual Customer ID/number (if allotted)
+Customer ID/number (if allotted)
+1A
+2A 
+3A
+4A 
+5A 
+6A
+7A
+8A
+Tick a to confirm
+9A
+10A
+11A 
+12A
+13A
+14A
+15A
+Tick a to confirm
+1B
+2B
+3B
+4B
+5B
+6B
+7B
+8B
+9B
+10B
+SBA02DO NOT FILL. FOR FIU-IND USE ONLY.
+FIU-IND Financial Intelligence Unit- India
+SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+Page 3
+LIST OF ACCOUNTS  LINKED TO TRANSACTIONS
+Annexure
+6.1
+6.2
+6.3
+6.4
+6.5
+6.6
+6.7
+6.8
+6.9
+6.10
+(Details of all accounts should be furnished in prescribed annexure) 
+Number of additional sheets for PART 6 attached  (Leave blank if space provided above is sufficient and no extra sheet is attached)
+DETAILS OF SUSPICIOUS TRANSACTION
+7.1 Reasons for suspicion (Tick a  as applicable. Multiple selection is possible. Refer to instructions)
+7.2 Grounds of Suspicion (Mention summary of suspicion and sequence of events)
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+(continued on next page)
+Kindly fill in CAPITAL. Read the Instructions before filling the form.
+Account Number Name of First Account Holder
+PART 6
+PART 7
+A Identity of client B Background of client C Multiple accounts
+D Activity in account E Nature of transaction F Value of transaction
+Z Other reason (specify)
+Tick a to confirm
+1C
+2C
+3C
+4C
+5C
+6C
+7C
+8C
+9C
+10C
+SBA03DO NOT FILL. FOR FIU-IND USE ONLY.
+FIU-IND Financial Intelligence Unit- India
+SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+Page 4
+7.3 Grounds of Suspicion (continued from previous page)
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+Number of additional sheets for PART 7 attached  (Leave blank if space provided above is sufficient and no extra sheet is attached)
+DETAILS OF ACTION TAKEN 
+8.1 Whether the matter is/was under any investigation? (Mention the name of agency, person and contact details)
+1
+2
+3
+4
+5
+Number of additional sheets for PART 8 attached  (Leave blank if space provided above is sufficient and no extra sheet is attached)
+Kindly fill in CAPITAL. Read the Instructions before filling the form.
+PART 8
+SBA04DO NOT FILL. FOR FIU-IND USE ONLY.
+(Should be same as the person mentioned in PART 2)
+DD M M
+00
+YY YY
+2
+DO NOT FILL. FOR FIU-IND USE ONLY
+ACK. NO.
+DATE
+Signature
+Name
+FIU-IND Financial Intelligence Unit- India
+SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+        
+GENERAL INSTRUCTIONS
+The Prevention of Money Laundering Act 2002
+How to submit
+Address Director, FIU-IND
+Financial Intelligence Unit-India Reasons for suspicion
+6th Floor, Hotel Samrat Reason
+Chanakyapuri, New Delhi -110021
+India
+Fax +91-11-26874459
+EXPLANATION OF SPECIFIC TERMS
+PART 1: DETAILS OF REPORT
+PART 2: DETAILS OF PRINCIPAL OFFICER
+“A”-Public Sector Bank “E”-Regional Rural Bank
+“B”-Private Sector Bank “F”-Local Area Bank
+“C”-Foreign Bank “Z”-Other
+“D”-Co-operative Bank
+PART 7: DETAILS OF SUSPICIOUS TRANSACTION
+Large number of accounts having a common 
+account holder, introducer or authorized signatory 
+with no rationale
+Accounts opened with names very close to other 
+established business entities
+Examples of suspicious transaction
+False identification documents
+Multiple 
+accounts
+Identification documents which could not be 
+verified within reasonable time
+Identity of 
+client 
+Background of 
+client
+Suspicious background  or links with known 
+criminals
+2.3. ID allotted by FIU-IND may be left blank till the same 
+is communicated by FIU-IND.
+2.4. Category of the bank
+2.5. Principal officer is the officer designated by the banking 
+company under PMLA, 2002
+Value inconsistent with the client's apparent 
+financial standing
+Value just under the reporting threshold amount in 
+an apparent attempt to avoid reporting
+ALL ANNEXURES MUST BE ENCLOSED.
+Value of 
+transactions
+Frequent purchases of drafts or other negotiable 
+instruments with cash
+No economic rationale or bonafide purpose
+Nature of transactions inconsistent with what would 
+be expected from declared business
+Nature of 
+transactions
+Unusual or unjustified complexity
+Sudden activity in dormant accounts
+Activity inconsistent with what would be expected 
+from declared business
+PART 3: DETAILS OF REPORTING BRANCH / LOCATION 
+Particulars of the branch/location in which the reported accounts are 
+maintained should be submitted in this part. 
+PART 5: LIST OF LEGAL PERSONS/ENTITIES LINKED 
+TO TRANSACTIONS
+Customer ID/number may be given if allotted by bank. Enclose a 
+separate Annexure B for each legal person/entity. Include the details 
+about individuals (Director/Partner/Member etc.) related to the 
+Enclose a separate Annexure C for each account.
+Unexplained transfers between multiple accounts 
+with no rationale
+Unusual activity compared with past transactions
+Suspicious transaction means a transaction whether or not made in 
+cash which, to a person acting in good faith –
+(a) gives rise to a reasonable ground of suspicion that it may 
+involve the proceeds of crime; or
+(b) appears to be made in circumstances of unusual or unjustified 
+complexity; or
+(c) appears to have no economic rationale or bonafide purpose.
+INSTRUCTIONS 
+1.1.   Date of sending report is the date on which the 
+principal officer sends the report to Director (FIU-IND).
+1.2.  Replacement report is a report submitted in 
+replacement of an earlier STR. When a replacement report is 
+submitted, date of submitting original STR may be 
+mentioned and the complete STR has to be submitted again. 
+Under the Prevention of Money Laundering Act  2002,  every 
+banking company shall furnish details of suspicious transactions 
+whether or not made in cash. 
+Every bank branch must submit this form to the Director, FIU-
+IND only through the principal officer of the banking company 
+designated under PMLA, 2002. In urgent cases, the form should 
+also be sent by fax.
+PART 4: LIST OF INDIVIDUALS LINKED TO 
+TRANSACTIONS
+PART 6: LIST OF ACCOUNTS  LINKED TO 
+TRANSACTIONS
+Customer ID/number may be given if allotted by bank. Enclose a 
+separate Annexure A for each individual. 
+Activity in 
+accounts
