@@ -1,0 +1,128 @@
+alert_id,customer_id,alert_date,alert_type,severity,description
+ALT-87d23cb1,102,2025-01-19,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-7a1f6b6f,1086,2025-01-16,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-babf2a2c,1093,2025-04-12,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-63c2aeaf,1119,2025-05-13,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-79318b11,115,2025-01-31,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-911cf05f,1197,2025-05-11,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-c8a1d551,1232,2025-01-06,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-0c49d3c6,1234,2025-03-27,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-813b0f57,1242,2025-02-06,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-b589a8e8,1325,2025-01-10,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-66ee7ab7,1337,2025-02-05,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-0cd4a24c,1357,2025-04-06,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-42b4c2e4,1393,2025-03-24,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-4dd03f9d,1400,2025-03-03,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-0b5fe8fc,1444,2025-01-19,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-b705bdb0,1598,2025-05-25,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-67248614,1607,2025-01-17,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-cd426519,1615,2025-01-21,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-461576a0,1678,2025-01-09,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-e79b2250,1730,2025-01-09,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-6781f586,1797,2025-02-17,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-4ba34ae3,1912,2025-02-03,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-cc79159a,1996,2025-01-17,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-bdc5a2ab,248,2025-01-10,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-026ce546,284,2025-01-10,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-a532a4b6,330,2025-02-09,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-f3129b26,406,2025-02-16,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-2bf302ee,594,2025-01-19,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-41354050,7,2025-04-16,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-208f0f8b,71,2025-04-06,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-ed6cfdbc,710,2025-02-25,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-b3300133,765,2025-01-31,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-088d1170,786,2025-03-11,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-688061e5,830,2025-01-29,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-c283fe8b,929,2025-01-04,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-43db4e57,967,2025-01-20,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-5caeac4c,975,2025-01-16,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-6d7d9889,993,2025-03-01,Potential Structuring,High,Detected 3 cash deposits just under reporting threshold in 7 days.
+ALT-42c4e0b6,1032,2025-01-13,Layering / Rapid Movement,Critical,Large inflow $79756.21 followed by immediate outflow of $71979.98.
+ALT-c28826a7,1032,2025-02-11,Layering / Rapid Movement,Critical,Large inflow $51192.61 followed by immediate outflow of $46201.33.
+ALT-adf309b9,1032,2025-03-26,Layering / Rapid Movement,Critical,Large inflow $65109.03 followed by immediate outflow of $58760.9.
+ALT-14a8ed14,1032,2025-04-07,Layering / Rapid Movement,Critical,Large inflow $50901.34 followed by immediate outflow of $45938.45.
+ALT-2a42f140,1229,2025-01-30,Layering / Rapid Movement,Critical,Large inflow $76564.5 followed by immediate outflow of $69099.47.
+ALT-1969da82,1229,2025-03-22,Layering / Rapid Movement,Critical,Large inflow $57328.69 followed by immediate outflow of $51739.14.
+ALT-6a26b5c6,1229,2025-05-17,Layering / Rapid Movement,Critical,Large inflow $53808.05 followed by immediate outflow of $48561.770000000004.
+ALT-950f8a8d,1229,2025-06-09,Layering / Rapid Movement,Critical,Large inflow $75199.74 followed by immediate outflow of $67867.76.
+ALT-67588afe,128,2025-01-02,Layering / Rapid Movement,Critical,Large inflow $48591.84 followed by immediate outflow of $43854.14.
+ALT-89bb2d80,128,2025-06-23,Layering / Rapid Movement,Critical,Large inflow $59836.26 followed by immediate outflow of $85489.72.
+ALT-144a548b,128,2025-06-25,Layering / Rapid Movement,Critical,Large inflow $55241.21 followed by immediate outflow of $49855.19.
+ALT-7e3c467e,1288,2025-03-10,Layering / Rapid Movement,Critical,Large inflow $61232.06 followed by immediate outflow of $55261.92999999999.
+ALT-8e91bae9,1288,2025-03-30,Layering / Rapid Movement,Critical,Large inflow $54249.56 followed by immediate outflow of $48960.229999999996.
+ALT-af94709f,1288,2025-06-29,Layering / Rapid Movement,Critical,Large inflow $57974.83 followed by immediate outflow of $52322.28.
+ALT-2b5a6583,1345,2025-01-20,Layering / Rapid Movement,Critical,Large inflow $41248.0 followed by immediate outflow of $37226.32.
+ALT-c065dc43,1345,2025-01-28,Layering / Rapid Movement,Critical,Large inflow $56834.6 followed by immediate outflow of $51293.22.
+ALT-f235ef54,1349,2025-06-08,Layering / Rapid Movement,Critical,Large inflow $69092.71 followed by immediate outflow of $62356.18.
+ALT-79bde219,1350,2025-02-16,Layering / Rapid Movement,Critical,Large inflow $79699.05 followed by immediate outflow of $71928.39.
+ALT-5591c39e,1350,2025-04-02,Layering / Rapid Movement,Critical,Large inflow $61005.34 followed by immediate outflow of $55057.31.
+ALT-8621d78a,1417,2025-01-16,Layering / Rapid Movement,Critical,Large inflow $56652.12 followed by immediate outflow of $60945.51.
+ALT-6526ecd4,1519,2025-05-24,Layering / Rapid Movement,Critical,Large inflow $78062.74 followed by immediate outflow of $70451.62.
+ALT-8d07f927,1533,2025-03-24,Layering / Rapid Movement,Critical,Large inflow $69357.58 followed by immediate outflow of $62595.22.
+ALT-df00a74f,1533,2025-04-30,Layering / Rapid Movement,Critical,Large inflow $52556.08 followed by immediate outflow of $47431.87.
+ALT-6ffa4c4d,1597,2025-01-04,Layering / Rapid Movement,Critical,Large inflow $69448.56 followed by immediate outflow of $62677.33.
+ALT-39e5c308,1597,2025-05-09,Layering / Rapid Movement,Critical,Large inflow $73263.84 followed by immediate outflow of $66120.62.
+ALT-68732c0b,1597,2025-05-25,Layering / Rapid Movement,Critical,Large inflow $50696.81 followed by immediate outflow of $45753.869999999995.
+ALT-d85f8295,1670,2025-02-21,Layering / Rapid Movement,Critical,Large inflow $58771.32 followed by immediate outflow of $53041.11.
+ALT-ad326b1a,1670,2025-06-13,Layering / Rapid Movement,Critical,Large inflow $62888.34 followed by immediate outflow of $56756.72.
+ALT-3813ce73,189,2025-01-20,Layering / Rapid Movement,Critical,Large inflow $57802.42 followed by immediate outflow of $52166.69.
+ALT-591d7430,189,2025-05-30,Layering / Rapid Movement,Critical,Large inflow $51625.09 followed by immediate outflow of $46591.64.
+ALT-f7900c74,345,2025-01-04,Layering / Rapid Movement,Critical,Large inflow $54205.56 followed by immediate outflow of $48920.52.
+ALT-252a1ece,345,2025-02-02,Layering / Rapid Movement,Critical,Large inflow $77482.37 followed by immediate outflow of $69927.84.
+ALT-896ac0ed,345,2025-04-03,Layering / Rapid Movement,Critical,Large inflow $66885.87 followed by immediate outflow of $60364.490000000005.
+ALT-191e4c49,345,2025-06-12,Layering / Rapid Movement,Critical,Large inflow $48785.91 followed by immediate outflow of $44029.29.
+ALT-0d2cfc64,382,2025-03-09,Layering / Rapid Movement,Critical,Large inflow $70640.41 followed by immediate outflow of $63752.97.
+ALT-5e5d74e7,382,2025-03-13,Layering / Rapid Movement,Critical,Large inflow $71092.06 followed by immediate outflow of $64160.58.
+ALT-64233e91,382,2025-03-21,Layering / Rapid Movement,Critical,Large inflow $44451.03 followed by immediate outflow of $40117.06.
+ALT-c4edbd5c,382,2025-04-21,Layering / Rapid Movement,Critical,Large inflow $66410.96 followed by immediate outflow of $59935.89.
+ALT-7e692c4d,382,2025-06-19,Layering / Rapid Movement,Critical,Large inflow $49040.44 followed by immediate outflow of $44259.0.
+ALT-633edf86,443,2025-01-16,Layering / Rapid Movement,Critical,Large inflow $68058.59 followed by immediate outflow of $61422.869999999995.
+ALT-3f25bd6b,443,2025-04-30,Layering / Rapid Movement,Critical,Large inflow $46345.63 followed by immediate outflow of $41826.93.
+ALT-6a9cb4e0,443,2025-06-18,Layering / Rapid Movement,Critical,Large inflow $77460.4 followed by immediate outflow of $69908.01000000001.
+ALT-1f8f2461,447,2025-03-22,Layering / Rapid Movement,Critical,Large inflow $77861.78 followed by immediate outflow of $70270.26000000001.
+ALT-9be0f6cf,447,2025-05-17,Layering / Rapid Movement,Critical,Large inflow $56245.46 followed by immediate outflow of $50761.53.
+ALT-18b57bec,482,2025-02-10,Layering / Rapid Movement,Critical,Large inflow $72357.76 followed by immediate outflow of $65302.869999999995.
+ALT-25abd692,482,2025-05-21,Layering / Rapid Movement,Critical,Large inflow $41704.5 followed by immediate outflow of $37638.32.
+ALT-8b9525a2,495,2025-04-25,Layering / Rapid Movement,Critical,Large inflow $67334.97 followed by immediate outflow of $60769.81.
+ALT-5d86d234,498,2025-03-19,Layering / Rapid Movement,Critical,Large inflow $75274.65 followed by immediate outflow of $67935.37.
+ALT-00f02c74,604,2025-03-11,Layering / Rapid Movement,Critical,Large inflow $72730.38 followed by immediate outflow of $65639.17.
+ALT-1360700f,617,2025-04-07,Layering / Rapid Movement,Critical,Large inflow $79993.06 followed by immediate outflow of $72193.73.
+ALT-b8ae9482,617,2025-04-30,Layering / Rapid Movement,Critical,Large inflow $41509.82 followed by immediate outflow of $37462.619999999995.
+ALT-d094a381,617,2025-06-19,Layering / Rapid Movement,Critical,Large inflow $52870.0 followed by immediate outflow of $47715.17.
+ALT-90463bc1,798,2025-04-03,Layering / Rapid Movement,Critical,Large inflow $76679.32 followed by immediate outflow of $69203.08.
+ALT-74226de2,894,2025-01-12,Layering / Rapid Movement,Critical,Large inflow $52024.0 followed by immediate outflow of $46951.66.
+ALT-d241709a,894,2025-02-24,Layering / Rapid Movement,Critical,Large inflow $50378.31 followed by immediate outflow of $45466.43.
+ALT-578eb9d4,894,2025-03-17,Layering / Rapid Movement,Critical,Large inflow $73590.77 followed by immediate outflow of $66415.67.
+ALT-7b315619,894,2025-03-24,Layering / Rapid Movement,Critical,Large inflow $41766.11 followed by immediate outflow of $37693.92.
+ALT-7d1c2cc8,1032,2025-04-08,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('UAE') 'Panama' np.str_('Cayman Islands')]).
+ALT-773f566b,1229,2025-06-10,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('UAE') 'Panama' np.str_('Cyprus') np.str_('Russia')]).
+ALT-25474303,128,2025-06-26,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Panama') 'UAE' np.str_('Russia')]).
+ALT-23d76484,1288,2025-06-30,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Russia') 'Panama' 'UAE' np.str_('Cyprus')]).
+ALT-03beb57a,1293,2025-05-27,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE' np.str_('Cayman Islands')]).
+ALT-e770ba1f,1322,2025-06-04,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Russia') 'Panama' 'UAE' np.str_('Cyprus')]).
+ALT-f646f2e9,1345,2025-01-29,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('UAE') 'Panama']).
+ALT-8cf7c6e4,1349,2025-06-09,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Panama') 'UAE']).
+ALT-84637401,1350,2025-04-03,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Panama') 'UAE' np.str_('Russia')]).
+ALT-f63f26db,1417,2025-06-06,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('UAE') 'Panama' np.str_('Cyprus')]).
+ALT-67ab79f7,1483,2025-06-06,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE']).
+ALT-4ccbd248,1519,2025-05-25,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cayman Islands') 'Panama' 'UAE']).
+ALT-ff208591,1533,2025-05-01,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Panama') 'UAE']).
+ALT-7edf19db,1563,2025-05-17,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Russia') 'Panama' 'UAE' np.str_('Cayman Islands')]).
+ALT-35b74268,1597,2025-05-26,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Russia') 'Panama' 'UAE' np.str_('Cayman Islands')]).
+ALT-828d8156,1622,2025-07-03,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Russia') 'Panama' 'UAE' np.str_('Cayman Islands')]).
+ALT-6fc383a8,1670,2025-06-14,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Panama') 'UAE' np.str_('Cyprus')]).
+ALT-24c9c819,1718,2025-07-07,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE' np.str_('Russia')]).
+ALT-3ca37275,189,2025-05-31,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE']).
+ALT-5d37a251,1939,2025-04-27,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE']).
+ALT-5f7d3f3b,345,2025-06-13,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE']).
+ALT-c5c8d550,382,2025-06-20,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Panama') 'UAE']).
+ALT-d9c8354b,443,2025-06-19,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE' np.str_('Russia')]).
+ALT-d328acc6,447,2025-05-18,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Russia') 'Panama' 'UAE' np.str_('Cyprus')]).
+ALT-8571c5d5,482,2025-05-22,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('UAE') 'Panama' np.str_('Russia')]).
+ALT-45baf9c8,495,2025-04-26,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('UAE') 'Panama']).
+ALT-c84951e0,498,2025-03-20,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE']).
+ALT-186eb571,604,2025-03-12,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('UAE') 'Panama']).
+ALT-3e94a31a,617,2025-06-20,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Russia') 'Panama' 'UAE' np.str_('Cyprus')]).
+ALT-41c3cda4,633,2025-06-20,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE']).
+ALT-146a06f7,798,2025-04-04,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Panama') 'UAE']).
+ALT-b4e165f7,894,2025-03-25,High Risk Geography,Medium,Multiple transactions involving high-risk jurisdictions ([np.str_('Cyprus') 'Panama' 'UAE' np.str_('Cayman Islands')]).
