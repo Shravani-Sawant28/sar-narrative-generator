@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Hack-o-Hire SAR Generator
 
 ## Prerequisites
@@ -42,3 +43,6 @@ Or directly using the python executable in the virtual environment:
 ```bash
 .\.venv\Scripts\python.exe -m streamlit run app.py
 ```
+=======
+# sar-narrative-generator
+>>>>>>> 1f1a5b68b559cabf8b2d036d2bff32685f53779f
