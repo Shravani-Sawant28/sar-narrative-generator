@@ -1,0 +1,44 @@
+{
+    "description": "Training-ready AML dataset used in ML model.",
+    "transaction_columns": [
+        "transaction_id",
+        "customer_id",
+        "timestamp",
+        "amount",
+        "txn_type",
+        "channel",
+        "sender_id",
+        "receiver_id",
+        "currency",
+        "country_dest",
+        "fx_rate",
+        "amount_gbp",
+        "is_high_risk_dest",
+        "is_fatf_black_dest"
+    ],
+    "customer_columns": [
+        "customer_id",
+        "full_name",
+        "yearly_income",
+        "occupation",
+        "customer_segment",
+        "country",
+        "account_opened",
+        "credit_score",
+        "is_pep",
+        "kyc_risk_rating",
+        "is_fatf_black",
+        "is_fatf_grey",
+        "is_fca_high_risk"
+    ],
+    "alert_columns": [
+        "alert_id",
+        "customer_id",
+        "alert_date",
+        "alert_type",
+        "severity",
+        "rule_triggered",
+        "sev_numeric"
+    ],
+    "data_type": "Fully Synthetic - No Real Customer Data Used"
+}
