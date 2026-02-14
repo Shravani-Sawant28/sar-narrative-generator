@@ -95,3 +95,31 @@ class DataManager:
             "suspicious_alerts": len(self.customers[self.customers['risk_rating'] == 'High']), # Same as high risk subjects
             "approved_files": 180
         }
+    
+    def get_sar_analytics(self, timeline='Month-wise'):
+        """Returns SAR analytics data for processed and disseminated SARs."""
+        import numpy as np
+        from datetime import datetime, timedelta
+        
+        # Generate mock SAR data based on timeline
+        if timeline == "Day-wise":
+            dates = pd.date_range(end=datetime.now(), periods=30, freq='D')
+            # SAR Processed: higher counts
+            sar_processed = np.random.randint(3, 12, size=30)
+            # SAR Disseminated: slightly lower (some are still in process)
+            sar_disseminated = [max(0, processed - np.random.randint(0, 3)) for processed in sar_processed]
+        elif timeline == "Month-wise":
+            dates = pd.date_range(end=datetime.now(), periods=12, freq='M')
+            sar_processed = np.random.randint(25, 85, size=12)
+            sar_disseminated = [max(0, processed - np.random.randint(5, 15)) for processed in sar_processed]
+        else:  # Year-wise
+            dates = pd.date_range(end=datetime.now(), periods=5, freq='Y')
+            sar_processed = np.random.randint(200, 600, size=5)
+            sar_disseminated = [max(0, processed - np.random.randint(20, 80)) for processed in sar_processed]
+        
+        return pd.DataFrame({
+            'date': dates,
+            'sar_processed': sar_processed,
+            'sar_disseminated': sar_disseminated
+        })
+

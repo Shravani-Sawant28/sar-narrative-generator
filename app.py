@@ -23,7 +23,7 @@ elif os.path.exists("pageicon.png"):
 elif os.path.exists("logo.jpg"):
     page_icon = "logo.jpg"
 else:
-    page_icon = "🛡️"
+    page_icon = ""
 
 st.set_page_config(
     page_title="SAR Admin Dashboard",
@@ -134,6 +134,37 @@ if 'sar_type' not in st.session_state:
 if 'sar_status' not in st.session_state:
     st.session_state['sar_status'] = "Draft"  # "Draft", "Under Review", "Escalated", "Filed", "Dismissed"
 
+# Collaboration State - Simulated Active Admins
+if 'active_admins' not in st.session_state:
+    from datetime import datetime, timedelta
+    st.session_state['active_admins'] = [
+        {
+            "id": "admin_001",
+            "name": "You",
+            "initials": "ME",
+            "color": "#00aeef",
+            "activity": "Viewing Dashboard",
+            "last_active": datetime.now()
+        },
+        {
+            "id": "admin_002",
+            "name": "Priya Sharma",
+            "initials": "PS",
+            "color": "#e53e3e",
+            "activity": "Reviewing Alert #245",
+            "last_active": datetime.now() - timedelta(seconds=15)
+        },
+        {
+            "id": "admin_003",
+            "name": "Amit Patel",
+            "initials": "AP",
+            "color": "#48bb78",
+            "activity": "Generating SAR for CUST-998877",
+            "last_active": datetime.now() - timedelta(seconds=45)
+        }
+    ]
+
+
 # --- Pages ---
 
 def admin_dashboard():
@@ -143,6 +174,39 @@ def admin_dashboard():
         
     st.title("Admin Dashboard")
     st.markdown("Overview of AML Monitoring Activities")
+    
+    # Collaboration Panel - Active Admins
+    st.markdown("---")
+    st.markdown("Active Admins")
+    
+    # Display active admins in a horizontal layout
+    admin_cols = st.columns(len(st.session_state['active_admins']))
+    for idx, admin in enumerate(st.session_state['active_admins']):
+        with admin_cols[idx]:
+            # Calculate time since last active
+            from datetime import datetime
+            time_diff = datetime.now() - admin['last_active']
+            if time_diff.total_seconds() < 60:
+                time_str = f"{int(time_diff.total_seconds())}s ago"
+            else:
+                time_str = f"{int(time_diff.total_seconds() / 60)}m ago"
+            
+            # Admin card with colored badge
+            st.markdown(f"""
+            <div style="background-color: #292B3D; padding: 15px; border-radius: 10px; border: 2px solid {admin['color']}; text-align: center;">
+                <div style="background-color: {admin['color']}; width: 50px; height: 50px; border-radius: 50%; 
+                            display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto;
+                            font-weight: bold; font-size: 1.2em; color: white;">
+                    {admin['initials']}
+                </div>
+                <div style="color: #FFFFFF; font-weight: 600; margin-bottom: 5px;">{admin['name']}</div>
+                <div style="color: #979AA3; font-size: 0.85em; margin-bottom: 3px;">{admin['activity']}</div>
+                <div style="color: {admin['color']}; font-size: 0.75em; font-weight: 500;">{time_str}</div>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+
     
     stats = data_manager.get_customer_stats()
     all_txns = data_manager.get_all_transactions()
@@ -184,7 +248,7 @@ def admin_dashboard():
     col_chart1, col_chart2 = st.columns([2, 1])
     
     with col_chart1:
-        st.subheader("SAR Generation Timeline")
+        st.subheader("SAR Analytics Dashboard")
         
         # Timeline selector
         timeline_option = st.selectbox(
@@ -193,44 +257,97 @@ def admin_dashboard():
             key="admin_sar_timeline"
         )
         
-        # Generate mock SAR data
-        import numpy as np
-        from datetime import datetime, timedelta
+        # Get SAR analytics data
+        sar_data = data_manager.get_sar_analytics(timeline_option)
         
-        # Create sample SAR generation data
+        # Determine date format
         if timeline_option == "Day-wise":
-            dates = pd.date_range(end=datetime.now(), periods=30, freq='D')
-            sar_counts = np.random.randint(0, 8, size=30)
             date_format = "%d %b"
         elif timeline_option == "Month-wise":
-            dates = pd.date_range(end=datetime.now(), periods=12, freq='M')
-            sar_counts = np.random.randint(5, 25, size=12)
             date_format = "%b %Y"
         else:  # Year-wise
-            dates = pd.date_range(end=datetime.now(), periods=5, freq='Y')
-            sar_counts = np.random.randint(50, 200, size=5)
             date_format = "%Y"
         
-        sar_df = pd.DataFrame({
-            'Date': dates,
-            'SAR Count': sar_counts
-        })
+        # Create grouped bar chart with data labels (matching reference image style)
+        fig_sar = go.Figure()
         
-        fig_sar = px.bar(
-            sar_df,
-            x='Date',
-            y='SAR Count',
-            title=f"SAR Reports Generated ({timeline_option})",
-            color_discrete_sequence=['#3696FC']
-        )
+        # Add SAR Processed bars (dark blue)
+        fig_sar.add_trace(go.Bar(
+            x=sar_data['date'],
+            y=sar_data['sar_processed'],
+            name='STRs Processed',
+            marker_color='#ffffff',
+            marker_line_color='#002d4a',
+            marker_line_width=1,
+            text=sar_data['sar_processed'],
+            textposition='outside',
+            textfont=dict(size=10, color='#00aeef', family='Arial Black'),
+            hovertemplate='<b>STRs Processed</b><br>Date: %{x}<br>Count: %{y}<extra></extra>'
+        ))
+        
+        # Add SAR Disseminated bars (light blue)
+        fig_sar.add_trace(go.Bar(
+            x=sar_data['date'],
+            y=sar_data['sar_disseminated'],
+            name='STRs Disseminated',
+            marker_color='#00aeef',
+            marker_line_color='#0088cc',
+            marker_line_width=1,
+            text=sar_data['sar_disseminated'],
+            textposition='outside',
+            textfont=dict(size=10, color='#00aeef', family='Arial Black'),
+            hovertemplate='<b>STRs Disseminated</b><br>Date: %{x}<br>Count: %{y}<extra></extra>'
+        ))
+        
+        # Update layout to match reference image style
         fig_sar.update_layout(
-            height=400,
-            xaxis_title=None,
-            yaxis_title="Number of SARs",
-            xaxis=dict(tickformat=date_format)
+            title={
+                'text': f"Chart: {timeline_option.replace('-wise', '')} STRs Processed and Disseminated",
+                'x': 0.5,
+                'xanchor': 'center',
+                'y': 0.98,
+                'yanchor': 'top',
+                'font': {'size': 14, 'family': 'Georgia, serif', 'color': '#FFFFFF'}
+            },
+            height=500,
+            xaxis_title="FINANCIAL YEAR" if timeline_option == "Year-wise" else "TIME PERIOD",
+            yaxis_title="NO.OF STRS",
+            xaxis=dict(
+                tickformat=date_format,
+                tickangle=-45,
+                tickfont=dict(size=10, color='#FFFFFF'),
+                title_font=dict(size=11, color='#FFFFFF'),
+                title_standoff=25
+            ),
+            yaxis=dict(
+                tickfont=dict(size=10, color='#FFFFFF'),
+                gridcolor='rgba(255,255,255,0.1)',
+                title_font=dict(size=11, color='#FFFFFF')
+            ),
+            legend=dict(
+                orientation="h",
+                yanchor="top",
+                y=-0.25,
+                xanchor="center",
+                x=0.5,
+                bgcolor="rgba(0,0,0,0.3)",
+                bordercolor="#00aeef",
+                borderwidth=1,
+                font=dict(color='#FFFFFF', size=10)
+            ),
+            barmode='group',
+            bargap=0.15,
+            bargroupgap=0.1,
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            margin=dict(t=60, b=120, l=60, r=40),
+            font=dict(color='#FFFFFF')
         )
-        fig_sar.update_traces(marker_color='#3696FC', marker_line_color='#2563eb', marker_line_width=1.5)
+        
         st.plotly_chart(fig_sar, use_container_width=True)
+
+
+
         
     with col_chart2:
         st.subheader("Risk Distribution")
@@ -506,6 +623,41 @@ def display_sar_editor():
                 use_container_width=True
             )
             st.success("Draft saved as PDF!")
+        
+        # Share SAR Button
+        if st.button("Generate Share Link", use_container_width=True, key="share_sar"):
+            import hashlib
+            from datetime import datetime
+            
+            # Generate unique share ID based on customer ID and timestamp
+            customer_id = st.session_state['current_customer']['customer_id']
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            unique_string = f"{customer_id}_{timestamp}_{sar_type}"
+            share_id = hashlib.md5(unique_string.encode()).hexdigest()[:12]
+            
+            # Generate shareable link (in production, this would be a real URL)
+            base_url = "https://sar-system.example.com/shared"
+            share_link = f"{base_url}/{share_id}"
+            
+            # Store in session state
+            st.session_state['share_link'] = share_link
+            st.session_state['share_id'] = share_id
+            
+            # Log action
+            audit_logger.log_event(f"{sar_type} SAR Share Link Generated", "Admin_User", {
+                "customer_id": customer_id,
+                "sar_type": sar_type,
+                "share_id": share_id
+            })
+            
+            st.success("Share link generated!")
+        
+        # Display share link if generated
+        if 'share_link' in st.session_state and st.session_state.get('share_link'):
+            st.info("**Shareable Link:**")
+            st.code(st.session_state['share_link'], language=None)
+            st.caption("Copy this link to share the SAR report with authorized personnel.")
+
         
         st.markdown("---")
         

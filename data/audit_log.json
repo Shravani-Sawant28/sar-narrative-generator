@@ -555,5 +555,135 @@
             "sar_type": "Internal",
             "status": "Generated"
         }
+    },
+    {
+        "timestamp": "2026-02-13T23:48:46.476119",
+        "event_type": "Internal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Internal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-13T23:48:50.564370",
+        "event_type": "Internal SAR Escalated to Regulatory",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "previous_type": "Internal",
+            "new_type": "Normal"
+        }
+    },
+    {
+        "timestamp": "2026-02-13T23:48:53.943081",
+        "event_type": "Normal SAR Filed with FIU-IND",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Normal",
+            "status": "Filed"
+        }
+    },
+    {
+        "timestamp": "2026-02-13T23:48:59.995135",
+        "event_type": "Normal SAR Draft Saved",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Normal",
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-13T23:49:14.173597",
+        "event_type": "Normal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Normal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-13T23:49:16.692012",
+        "event_type": "Normal SAR Draft Saved",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Normal",
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-13T23:49:23.797234",
+        "event_type": "Normal SAR Filed with FIU-IND",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Normal",
+            "status": "Filed"
+        }
+    },
+    {
+        "timestamp": "2026-02-14T14:16:27.949946",
+        "event_type": "Internal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Internal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-14T14:16:31.539055",
+        "event_type": "Internal SAR Share Link Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Internal",
+            "share_id": "7cb7921e7b1d"
+        }
+    },
+    {
+        "timestamp": "2026-02-14T14:22:12.480857",
+        "event_type": "Internal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Internal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-14T14:22:15.784282",
+        "event_type": "Internal SAR Share Link Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Internal",
+            "share_id": "472e2f2e0237"
+        }
+    },
+    {
+        "timestamp": "2026-02-14T14:23:33.182659",
+        "event_type": "Internal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Internal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-14T14:23:35.545788",
+        "event_type": "Internal SAR Share Link Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "CUST-998877",
+            "sar_type": "Internal",
+            "share_id": "273318fa95b3"
+        }
     }
 ]
