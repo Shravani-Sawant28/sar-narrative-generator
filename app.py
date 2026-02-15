@@ -133,36 +133,40 @@ if 'sar_type' not in st.session_state:
     st.session_state['sar_type'] = "Internal"  # "Internal" or "Normal"
 if 'sar_status' not in st.session_state:
     st.session_state['sar_status'] = "Draft"  # "Draft", "Under Review", "Escalated", "Filed", "Dismissed"
+if 'sar_report_stage' not in st.session_state:
+    st.session_state['sar_report_stage'] = 1  # 1 = Initial Report, 2 = Final Report with Edits
+if 'sar_edit_comments' not in st.session_state:
+    st.session_state['sar_edit_comments'] = ""
 
-# Collaboration State - Simulated Active Admins
-if 'active_admins' not in st.session_state:
-    from datetime import datetime, timedelta
-    st.session_state['active_admins'] = [
-        {
-            "id": "admin_001",
-            "name": "You",
-            "initials": "ME",
-            "color": "#00aeef",
-            "activity": "Viewing Dashboard",
-            "last_active": datetime.now()
-        },
-        {
-            "id": "admin_002",
-            "name": "Priya Sharma",
-            "initials": "PS",
-            "color": "#e53e3e",
-            "activity": "Reviewing Alert #245",
-            "last_active": datetime.now() - timedelta(seconds=15)
-        },
-        {
-            "id": "admin_003",
-            "name": "Amit Patel",
-            "initials": "AP",
-            "color": "#48bb78",
-            "activity": "Generating SAR for CUST-998877",
-            "last_active": datetime.now() - timedelta(seconds=45)
-        }
-    ]
+# Handle shared report URL parameters
+query_params = st.query_params
+if 'share_id' in query_params:
+    share_id = query_params['share_id']
+    shared_reports_dir = "data/shared_reports"
+    share_file_path = os.path.join(shared_reports_dir, f"{share_id}.json")
+    
+    if os.path.exists(share_file_path):
+        try:
+            with open(share_file_path, 'r') as f:
+                shared_data = json.load(f)
+            
+            # Load the shared report into session state
+            st.session_state['current_customer'] = shared_data.get('customer')
+            st.session_state['generated_narrative'] = shared_data.get('narrative', '')
+            st.session_state['audit_trace'] = shared_data.get('audit_trace', [])
+            st.session_state['sar_type'] = shared_data.get('sar_type', 'Internal')
+            st.session_state['sar_status'] = shared_data.get('sar_status', 'Draft')
+            st.session_state['sar_report_stage'] = shared_data.get('report_stage', 1)
+            st.session_state['sar_edit_comments'] = shared_data.get('edit_comments', '')
+            st.session_state['nav_selection'] = "AI Assistant"  # Navigate to report view
+            
+            # Clear the query params after loading
+            st.query_params.clear()
+        except Exception as e:
+            st.error(f"Error loading shared report: {str(e)}")
+
+
+
 
 
 # --- Pages ---
@@ -175,37 +179,7 @@ def admin_dashboard():
     st.title("Admin Dashboard")
     st.markdown("Overview of AML Monitoring Activities")
     
-    # Collaboration Panel - Active Admins
-    st.markdown("---")
-    st.markdown("Active Admins")
-    
-    # Display active admins in a horizontal layout
-    admin_cols = st.columns(len(st.session_state['active_admins']))
-    for idx, admin in enumerate(st.session_state['active_admins']):
-        with admin_cols[idx]:
-            # Calculate time since last active
-            from datetime import datetime
-            time_diff = datetime.now() - admin['last_active']
-            if time_diff.total_seconds() < 60:
-                time_str = f"{int(time_diff.total_seconds())}s ago"
-            else:
-                time_str = f"{int(time_diff.total_seconds() / 60)}m ago"
-            
-            # Admin card with colored badge
-            st.markdown(f"""
-            <div style="background-color: #292B3D; padding: 15px; border-radius: 10px; border: 2px solid {admin['color']}; text-align: center;">
-                <div style="background-color: {admin['color']}; width: 50px; height: 50px; border-radius: 50%; 
-                            display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto;
-                            font-weight: bold; font-size: 1.2em; color: white;">
-                    {admin['initials']}
-                </div>
-                <div style="color: #FFFFFF; font-weight: 600; margin-bottom: 5px;">{admin['name']}</div>
-                <div style="color: #979AA3; font-size: 0.85em; margin-bottom: 3px;">{admin['activity']}</div>
-                <div style="color: {admin['color']}; font-size: 0.75em; font-weight: 500;">{time_str}</div>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    st.markdown("---")
+
 
     
     stats = data_manager.get_customer_stats()
@@ -364,21 +338,64 @@ def admin_dashboard():
         fig_donut.update_layout(height=400, showlegend=True, legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
         st.plotly_chart(fig_donut, use_container_width=True)
 
-    # Recent Flagged Transactions (Mock)
-    st.subheader(" Recent Flagged Transactions")
-    flagged_txns = all_txns[all_txns['amount'] > 50000].sort_values('date', ascending=False).head(5)
-    st.dataframe(
-        flagged_txns[['transaction_id', 'customer_id', 'date', 'amount', 'type', 'description']],
-        hide_index=True,
-        use_container_width=True
-    )
+    # Recent Flagged Transactions - Using Real Alert Data
+    st.subheader("Recent Flagged Transactions")
+    
+    # Get alerts and join with transactions
+    if data_manager.alerts is not None and not data_manager.alerts.empty:
+        # Get most recent high-severity alerts
+        recent_alerts = data_manager.alerts[
+            data_manager.alerts['severity'].isin(['HIGH', 'CRITICAL'])
+        ].sort_values('alert_date', ascending=False).head(25)
+        
+        if not recent_alerts.empty:
+            # Get customer IDs from recent alerts
+            alert_customer_ids = recent_alerts['customer_id'].unique()
+            
+            # Get transactions for these customers
+            flagged_txns = all_txns[all_txns['customer_id'].isin(alert_customer_ids)].copy()
+            
+            # Merge with alert information to show alert type and severity
+            flagged_txns = flagged_txns.merge(
+                recent_alerts[['customer_id', 'alert_type', 'severity', 'rule_triggered']].drop_duplicates('customer_id'),
+                on='customer_id',
+                how='left'
+            )
+            
+            # Sort by date and get top 25
+            flagged_txns = flagged_txns.sort_values('date', ascending=False).head(25)
+            
+            # Display the flagged transactions
+            st.dataframe(
+                flagged_txns[['date', 'transaction_id', 'customer_id', 'amount', 'type', 'channel', 'alert_type', 'severity']],
+                hide_index=True,
+                use_container_width=True,
+                column_config={
+                    "date": "Date",
+                    "transaction_id": "Transaction ID",
+                    "customer_id": "Customer ID",
+                    "amount": st.column_config.NumberColumn("Amount", format="%.2f"),
+                    "type": "Type",
+                    "channel": "Channel",
+                    "alert_type": "Alert Type",
+                    "severity": "Severity"
+                }
+            )
+        else:
+            st.info("No high-severity alerts found.")
+    else:
+        # Fallback if no alerts data
+        st.info("No alert data available. Please ensure ALERTS_TRAINING.csv is loaded.")
+
 
 def user_management_page():
-    st.title(" User Management")
+    st.title("User Management")
     
     # State Management for Navigation
     if 'selected_customer_id' not in st.session_state:
         st.session_state['selected_customer_id'] = None
+    if 'current_page' not in st.session_state:
+        st.session_state['current_page'] = 0
 
     # Detail View
     if st.session_state['selected_customer_id']:
@@ -393,58 +410,468 @@ def user_management_page():
         st.sidebar.markdown("### Filters")
         risk_filter = st.sidebar.multiselect(
             "Risk Rating", 
-            ["High", "Medium", "Low"], 
-            default=["High", "Medium", "Low"]
+            ["HIGH", "MEDIUM", "LOW"], 
+            default=["HIGH", "MEDIUM", "LOW"]
         )
+        
+        # Search box
+        search_term = st.sidebar.text_input("Search by Name or ID", "")
         
         customers = data_manager.customers
         filtered_customers = customers[customers['risk_rating'].isin(risk_filter)]
         
-        st.markdown("### Customer Registry")
+        # Apply search filter
+        if search_term:
+            filtered_customers = filtered_customers[
+                filtered_customers['name'].str.contains(search_term, case=False, na=False) |
+                filtered_customers['customer_id'].str.contains(search_term, case=False, na=False)
+            ]
         
-        # Display as a grid of cards or a clean list
-        for idx, row in filtered_customers.iterrows():
-            with st.container():
-                # Card-like container
-                st.markdown(f"""
-                <div style="background-color: #292B3D; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #333333;">
-                    <div style="display: flex; justify-content: space-between; align_items: center;">
-                        <div>
-                            <h3 style="margin: 0; color: #FFFFFF;">{row['name']}</h3>
-                            <p style="margin: 0; color: #979AA3; font-size: 0.9em;">ID: {row['customer_id']} | Occupation: {row['occupation']}</p>
-                        </div>
-                        <div style="text-align: right;">
-                             <span style="background-color: {'#e53e3e' if row['risk_rating'] == 'High' else '#ed8936' if row['risk_rating'] == 'Medium' else '#48bb78'}; 
-                                          padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.8em;">
-                                {row['risk_rating']} Risk
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+        # Pagination settings
+        items_per_page = 20
+        total_customers = len(filtered_customers)
+        total_pages = (total_customers + items_per_page - 1) // items_per_page
+        
+        # Ensure current page is within bounds
+        if st.session_state['current_page'] >= total_pages and total_pages > 0:
+            st.session_state['current_page'] = total_pages - 1
+        elif st.session_state['current_page'] < 0:
+            st.session_state['current_page'] = 0
+        
+        st.markdown(f"### Customer Registry ({total_customers} customers)")
+        
+        if total_customers == 0:
+            st.info("No customers match the selected filters.")
+        else:
+            # Calculate pagination indices
+            start_idx = st.session_state['current_page'] * items_per_page
+            end_idx = min(start_idx + items_per_page, total_customers)
+            
+            # Get current page customers
+            page_customers = filtered_customers.iloc[start_idx:end_idx]
+            
+            # Display customers in a more efficient way
+            for idx, row in page_customers.iterrows():
+                col1, col2, col3 = st.columns([3, 2, 1])
                 
-                # Action Button
-                if st.button(f"View Profile ➜", key=f"btn_{row['customer_id']}"):
-                    st.session_state['selected_customer_id'] = row['customer_id']
+                with col1:
+                    st.markdown(f"**{row['name']}**")
+                    st.caption(f"ID: {row['customer_id']} | {row['occupation']}")
+                
+                with col2:
+                    risk_color = '#e53e3e' if row['risk_rating'] == 'HIGH' else '#ed8936' if row['risk_rating'] == 'MEDIUM' else '#48bb78'
+                    st.markdown(f"<span style='background-color: {risk_color}; padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 0.8em;'>{row['risk_rating']} Risk</span>", unsafe_allow_html=True)
+                
+                with col3:
+                    if st.button("View →", key=f"btn_{row['customer_id']}"):
+                        # Log the customer profile view
+                        audit_logger.log_event("Customer Profile Viewed", "Admin_User", {
+                            "customer_id": row['customer_id'],
+                            "customer_name": row['name'],
+                            "risk_rating": row['risk_rating'],
+                            "action": "View Profile"
+                        })
+                        st.session_state['selected_customer_id'] = row['customer_id']
+                        st.rerun()
+
+                
+                st.markdown("---")
+            
+            # Pagination controls
+            col1, col2, col3, col4, col5 = st.columns([1, 1, 2, 1, 1])
+            
+            with col1:
+                if st.button("⏮First", disabled=(st.session_state['current_page'] == 0)):
+                    st.session_state['current_page'] = 0
                     st.rerun()
+            
+            with col2:
+                if st.button("Prev", disabled=(st.session_state['current_page'] == 0)):
+                    st.session_state['current_page'] -= 1
+                    st.rerun()
+            
+            with col3:
+                st.markdown(f"<div style='text-align: center; padding: 8px;'>Page {st.session_state['current_page'] + 1} of {total_pages}</div>", unsafe_allow_html=True)
+            
+            with col4:
+                if st.button("Next ", disabled=(st.session_state['current_page'] >= total_pages - 1)):
+                    st.session_state['current_page'] += 1
+                    st.rerun()
+            
+            with col5:
+                if st.button("Last ", disabled=(st.session_state['current_page'] >= total_pages - 1)):
+                    st.session_state['current_page'] = total_pages - 1
+                    st.rerun()
+
 
 def show_customer_details(customer_id):
     customer = data_manager.get_customer(customer_id)
     transactions = data_manager.get_transactions(customer_id)
+    alerts = data_manager.get_alerts(customer_id)
     
-    st.markdown(f"## {customer['name']}")
+    # Helper function to display country code
+    def display_country(country_code):
+        """Convert country codes for better display (GB -> UK)"""
+        if country_code == 'GB':
+            return 'UK'
+        return country_code
     
-    # Validating risk rating color
-    risk_color = "red" if customer['risk_rating'] == 'High' else "orange" if customer['risk_rating'] == 'Medium' else "green"
-    st.markdown(f"**Risk Rating:** :{risk_color}[{customer['risk_rating']}] | **ID:** `{customer['customer_id']}`")
+    # Custom CSS for Profile Cards
+    st.markdown("""
+        <style>
+        .profile-header {
+            background: linear-gradient(135deg, #292B3D 0%, #1a1d2e 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 1px solid #333333;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .profile-name {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 8px;
+        }
+        .profile-subtitle {
+            color: #979AA3;
+            font-size: 1.1em;
+        }
+        .info-card {
+            background-color: #292B3D;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333333;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            margin-bottom: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+        .info-card-title {
+            font-size: 0.85em;
+            color: #979AA3;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .info-card-value {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+        .section-header {
+            background-color: #1a1d2e;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin: 24px 0 16px 0;
+            border-left: 4px solid #00aeef;
+        }
+        .section-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin: 0;
+        }
+        .compliance-badge {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95em;
+            text-align: center;
+            margin: 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .alert-card {
+            background-color: #2d1f1f;
+            border-left: 4px solid #e53e3e;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
     
-    d1, d2, d3 = st.columns(3)
-    d1.info(f"**Occupation**\n\n{customer['occupation']}")
-    d2.info(f"**Tenure**\n\n{customer['tenure_years']} Years")
-    d3.info(f"**KYC Status**\n\n{customer['kyc_status']}")
+    # === PROFILE HEADER ===
+    risk_badge_color = '#e53e3e' if customer['risk_rating'] == 'HIGH' else '#ed8936' if customer['risk_rating'] == 'MEDIUM' else '#48bb78'
     
-    # Visual Transaction History with Timeline Selector
-    st.markdown("Activity Timeline")
+    st.markdown(f"""
+        <div class="profile-header">
+            <div class="profile-name">{customer['name']}</div>
+            <div class="profile-subtitle">
+                <span style="background-color: {risk_badge_color}; padding: 6px 12px; border-radius: 6px; color: white; font-weight: bold; margin-right: 12px;">
+                    {customer['risk_rating']} RISK
+                </span>
+                Customer ID: <code style="background-color: #1a1d2e; padding: 4px 8px; border-radius: 4px; color: #00aeef;">{customer['customer_id']}</code>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # === PERSONAL & ACCOUNT INFORMATION ===
+    st.markdown("""
+        <div class="section-header">
+            <div class="section-title">Personal & Account Information</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Full Name</div>
+                <div class="info-card-value">{customer['name']}</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Customer ID</div>
+                <div class="info-card-value" style="color: #00aeef;">{customer['customer_id']}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Country</div>
+                <div class="info-card-value">{display_country(customer['country'])}</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Occupation</div>
+                <div class="info-card-value">{customer['occupation']}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Account Opened</div>
+                <div class="info-card-value">{customer.get('account_opened', 'N/A')}</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Tenure</div>
+                <div class="info-card-value">{customer['tenure_years']} Years</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Customer Segment</div>
+                <div class="info-card-value">{customer.get('customer_segment', 'N/A')}</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        kyc_color = '#48bb78' if customer['kyc_status'] == 'Verified' else '#ed8936'
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">KYC Status</div>
+                <div class="info-card-value" style="color: {kyc_color};">✓ {customer['kyc_status']}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # === FINANCIAL INFORMATION ===
+    st.markdown("""
+        <div class="section-header">
+            <div class="section-title">Financial Information</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    fin_col1, fin_col2, fin_col3 = st.columns(3)
+    
+    with fin_col1:
+        yearly_income = customer.get('yearly_income', 0)
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Yearly Income</div>
+                <div class="info-card-value" style="color: #48bb78;">${yearly_income:,.2f}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with fin_col2:
+        credit_score = customer.get('credit_score', 0)
+        credit_color = "#48bb78" if credit_score >= 700 else "#ed8936" if credit_score >= 600 else "#e53e3e"
+        credit_icon = "🟢" if credit_score >= 700 else "🟡" if credit_score >= 600 else "🔴"
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Credit Score</div>
+                <div class="info-card-value" style="color: {credit_color};">{credit_icon} {credit_score}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with fin_col3:
+        st.markdown(f"""
+            <div class="info-card">
+                <div class="info-card-title">Customer Segment</div>
+                <div class="info-card-value">{customer.get('customer_segment', 'N/A')}</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # === RISK & COMPLIANCE FLAGS ===
+    st.markdown("""
+        <div class="section-header">
+            <div class="section-title">⚠️ Risk & Compliance</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    risk_col1, risk_col2, risk_col3, risk_col4, risk_col5 = st.columns(5)
+    
+    with risk_col1:
+        st.markdown(f"""
+            <div class="info-card" style="text-align: center;">
+                <div class="info-card-title">Risk Rating</div>
+                <div class="compliance-badge" style="background-color: {risk_badge_color}; color: white;">
+                    {customer['risk_rating']}
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with risk_col2:
+        pep_status = customer.get('is_pep', 0) == 1
+        pep_color = "#e53e3e" if pep_status else "#48bb78"
+        pep_text = "YES" if pep_status else "NO"
+        pep_icon = "⚠️" if pep_status else "✓"
+        st.markdown(f"""
+            <div class="info-card" style="text-align: center;">
+                <div class="info-card-title">PEP Status</div>
+                <div class="compliance-badge" style="background-color: {pep_color}; color: white;">
+                    {pep_icon} {pep_text}
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with risk_col3:
+        fatf_black = customer.get('is_fatf_black', 0) == 1
+        fatf_black_color = "#e53e3e" if fatf_black else "#48bb78"
+        fatf_black_text = "YES" if fatf_black else "NO"
+        fatf_black_icon = "⚠️" if fatf_black else "✓"
+        st.markdown(f"""
+            <div class="info-card" style="text-align: center;">
+                <div class="info-card-title">FATF Blacklist</div>
+                <div class="compliance-badge" style="background-color: {fatf_black_color}; color: white;">
+                    {fatf_black_icon} {fatf_black_text}
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with risk_col4:
+        fatf_grey = customer.get('is_fatf_grey', 0) == 1
+        fatf_grey_color = "#ed8936" if fatf_grey else "#48bb78"
+        fatf_grey_text = "YES" if fatf_grey else "NO"
+        fatf_grey_icon = "⚠️" if fatf_grey else "✓"
+        st.markdown(f"""
+            <div class="info-card" style="text-align: center;">
+                <div class="info-card-title">FATF Greylist</div>
+                <div class="compliance-badge" style="background-color: {fatf_grey_color}; color: white;">
+                    {fatf_grey_icon} {fatf_grey_text}
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    with risk_col5:
+        fca_high_risk = customer.get('is_fca_high_risk', 0) == 1
+        fca_color = "#e53e3e" if fca_high_risk else "#48bb78"
+        fca_text = "YES" if fca_high_risk else "NO"
+        fca_icon = "⚠️" if fca_high_risk else "✓"
+        st.markdown(f"""
+            <div class="info-card" style="text-align: center;">
+                <div class="info-card-title">FCA High Risk</div>
+                <div class="compliance-badge" style="background-color: {fca_color}; color: white;">
+                    {fca_icon} {fca_text}
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # === ALERT INFORMATION ===
+    if alerts is not None and not alerts.empty:
+        st.markdown("""
+            <div class="section-header">
+                <div class="section-title">Alert Information</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Display alert summary metrics in cards
+        alert_summary_col1, alert_summary_col2, alert_summary_col3 = st.columns(3)
+        
+        with alert_summary_col1:
+            st.markdown(f"""
+                <div class="info-card">
+                    <div class="info-card-title">Total Alerts</div>
+                    <div class="info-card-value" style="color: #e53e3e;">{len(alerts)}</div>
+                </div>
+            """, unsafe_allow_html=True)
+        
+        with alert_summary_col2:
+            critical_count = len(alerts[alerts['severity'] == 'CRITICAL']) if 'severity' in alerts.columns else 0
+            high_count = len(alerts[alerts['severity'] == 'HIGH']) if 'severity' in alerts.columns else 0
+            total_high_critical = critical_count + high_count
+            st.markdown(f"""
+                <div class="info-card">
+                    <div class="info-card-title">High/Critical Alerts</div>
+                    <div class="info-card-value" style="color: #e53e3e;">{total_high_critical}</div>
+                </div>
+            """, unsafe_allow_html=True)
+        
+        with alert_summary_col3:
+            latest_alert = alerts['alert_date'].max() if 'alert_date' in alerts.columns else 'N/A'
+            latest_alert_str = str(latest_alert)[:10] if latest_alert != 'N/A' else 'N/A'
+            st.markdown(f"""
+                <div class="info-card">
+                    <div class="info-card-title">Latest Alert</div>
+                    <div class="info-card-value" style="color: #ed8936;">{latest_alert_str}</div>
+                </div>
+            """, unsafe_allow_html=True)
+        
+        # Display detailed alert table
+        st.markdown("<br>", unsafe_allow_html=True)
+        alert_display_cols = ['alert_date', 'alert_type', 'severity', 'rule_triggered']
+        available_cols = [col for col in alert_display_cols if col in alerts.columns]
+        
+        if available_cols:
+            st.dataframe(
+                alerts[available_cols].sort_values('alert_date', ascending=False) if 'alert_date' in available_cols else alerts[available_cols],
+                hide_index=True,
+                use_container_width=True,
+                column_config={
+                    "alert_date": "Alert Date",
+                    "alert_type": "Alert Type",
+                    "severity": "Severity",
+                    "rule_triggered": "Rule Triggered"
+                }
+            )
+        else:
+            st.dataframe(alerts, hide_index=True, use_container_width=True)
+    else:
+        st.markdown("""
+            <div class="section-header">
+                <div class="section-title">🚨 Alert Information</div>
+            </div>
+        """, unsafe_allow_html=True)
+        st.markdown("""
+            <div class="info-card" style="text-align: center; padding: 30px;">
+                <div style="font-size: 2em; margin-bottom: 10px;">✓</div>
+                <div style="color: #48bb78; font-size: 1.2em; font-weight: 600;">No Alerts Found</div>
+                <div style="color: #979AA3; margin-top: 8px;">This customer has no recorded alerts</div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    # === TRANSACTION ACTIVITY ===
+    st.markdown("""
+        <div class="section-header">
+            <div class="section-title">Transaction Activity</div>
+        </div>
+    """, unsafe_allow_html=True)
     
     # Timeline selector
     txn_timeline = st.selectbox(
@@ -476,33 +903,107 @@ def show_customer_details(customer_id):
         barmode='group'
     )
     fig_timeline.update_layout(
-        height=300,
+        height=350,
         xaxis_title=None,
-        yaxis_title="Amount (INR)",
-        xaxis=dict(tickformat=date_format)
+        yaxis_title="Amount",
+        xaxis=dict(tickformat=date_format, tickangle=-45),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#FFFFFF')
     )
     st.plotly_chart(fig_timeline, use_container_width=True)
     
-    st.markdown("Transaction Details")
-    st.dataframe(transactions[['date', 'transaction_id', 'type', 'amount', 'counterparty', 'description']], hide_index=True, use_container_width=True)
+    # === COMPREHENSIVE TRANSACTION DETAILS ===
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    st.markdown("---")
-    st.subheader("Regulatory Reporting")
+    # Prepare transaction display with all available columns
+    txn_display_cols = ['date', 'transaction_id', 'type', 'amount', 'currency', 'amount_gbp', 
+                        'channel', 'country_dest', 'counterparty', 'description']
     
-    # SAR Type Selection
-    st.markdown("#### Select SAR Type")
-    sar_type_choice = st.radio(
-        "Choose report type:",
-        ["Internal SAR (Preliminary Investigation)", "Normal SAR (Regulatory Filing with FIU-IND)"],
-        key=f"sar_type_radio_{customer_id}",
-        help="Internal SAR: For internal compliance review. Normal SAR: Official filing with government authority."
+    # Filter to only include columns that exist in the dataframe
+    available_txn_cols = [col for col in txn_display_cols if col in transactions.columns]
+    
+    # Create a copy for display and convert GB to UK in country_dest
+    transactions_display = transactions[available_txn_cols].copy()
+    if 'country_dest' in transactions_display.columns:
+        transactions_display['country_dest'] = transactions_display['country_dest'].apply(display_country)
+    
+    st.dataframe(
+        transactions_display.sort_values('date', ascending=False),
+        hide_index=True,
+        use_container_width=True,
+        column_config={
+            "date": "Date",
+            "transaction_id": "Transaction ID",
+            "type": "Type",
+            "amount": st.column_config.NumberColumn("Amount", format="%.2f"),
+            "currency": "Currency",
+            "amount_gbp": st.column_config.NumberColumn("Amount (GBP)", format="%.2f"),
+            "channel": "Channel",
+            "country_dest": "Destination Country",
+            "counterparty": "Receiver ID",
+            "description": "Description"
+        }
     )
     
-    # Display info based on selection
+    
+    # === REGULATORY REPORTING ===
+    st.markdown("""
+        <div class="section-header">
+            <div class="section-title">Regulatory Reporting</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # SAR Type Selection with styled cards
+    st.markdown("""
+        <div style="margin-bottom: 20px;">
+            <div style="color: #979AA3; font-size: 0.95em; margin-bottom: 12px; font-weight: 500;">
+                SELECT SAR TYPE
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    sar_type_choice = st.radio(
+        "Choose report type:",
+        [
+            "Internal SAR (Preliminary Investigation)",
+            "Normal SAR (Regulatory Filing with FIU-IND)"
+        ],
+        key=f"sar_type_radio_{customer_id}",
+        label_visibility="collapsed"
+    )
+    
+    # Display info card based on selection
     if "Internal" in sar_type_choice:
-        st.info("**Internal SAR** - This report will be reviewed by the compliance team before any regulatory action.")
+        st.markdown("""
+            <div class="info-card" style="background-color: #1a2332; border-left: 4px solid #00aeef;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="font-size: 1.5em;">ℹ️</div>
+                    <div>
+                        <div style="font-weight: 600; color: #00aeef; margin-bottom: 4px;">Internal SAR</div>
+                        <div style="color: #979AA3; font-size: 0.9em;">
+                            This report will be reviewed by the compliance team before any regulatory action.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
     else:
-        st.warning("**Regulatory SAR** - This report will be filed with FIU-IND. **DO NOT inform the customer (tipping off is illegal)**.")
+        st.markdown("""
+            <div class="info-card" style="background-color: #2d1f1f; border-left: 4px solid #e53e3e;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="font-size: 1.5em;">⚠️</div>
+                    <div>
+                        <div style="font-weight: 600; color: #e53e3e; margin-bottom: 4px;">Regulatory SAR</div>
+                        <div style="color: #979AA3; font-size: 0.9em;">
+                            This report will be filed with FIU-IND. <strong style="color: #e53e3e;">DO NOT inform the customer (tipping off is illegal)</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
     
     if st.button("Generate Suspicious Transaction Report (STR) ", key="gen_sar_btn", type="primary"):
         with st.spinner("Analyzing patterns and compiling STR..."):
@@ -516,6 +1017,10 @@ def show_customer_details(customer_id):
             st.session_state['sar_type'] = "Internal" if "Internal" in sar_type_choice else "Normal"
             st.session_state['sar_status'] = "Draft"
             
+            # Reset to Stage 1 for new SAR
+            st.session_state['sar_report_stage'] = 1
+            st.session_state['sar_edit_comments'] = ""
+            
             # Log with SAR type
             sar_type_label = st.session_state['sar_type']
             audit_logger.log_event(f"{sar_type_label} SAR Generated", "Admin_User", {
@@ -528,11 +1033,116 @@ def show_customer_details(customer_id):
             st.session_state["nav_selection"] = "AI Assistant"
             st.rerun()
 
+
 def display_sar_editor():
-    st.markdown("---")
+    # Force scroll to top by using a container at the top
+    st.markdown('<div id="top-of-page"></div>', unsafe_allow_html=True)
     
-    # Display SAR Type Badge
-    sar_type = st.session_state.get('sar_type', 'Internal')
+    # Check for comparison mode
+    comparison_mode = st.session_state.get('view_comparison_mode', False)
+    
+    if comparison_mode:
+        # --- COMPARISON VIEW ---
+        st.markdown("Report Comparison (Initial vs Final)")
+        
+        if st.button("← Back to Editor", key="back_from_comp"):
+            st.session_state['view_comparison_mode'] = False
+            st.rerun()
+            
+        comp_col1, comp_col2 = st.columns(2)
+        
+        with comp_col1:
+            st.markdown("Initial Report")
+            import base64
+            pdf_path_initial = "Fincen SAR formata also includes basic rules_BEFORECHANGES.pdf"
+            if os.path.exists(pdf_path_initial):
+                with open(pdf_path_initial, "rb") as f:
+                    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                st.markdown(f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>', unsafe_allow_html=True)
+            else:
+                st.error("Initial report PDF not found.")
+
+        with comp_col2:
+            st.markdown("Final Report")
+            import base64
+            pdf_path_final = "Fincen SAR formata also includes basic rules_afterChangesFinal.pdf"
+            if os.path.exists(pdf_path_final):
+                with open(pdf_path_final, "rb") as f:
+                    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                st.markdown(f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>', unsafe_allow_html=True)
+            else:
+                st.error("Final report PDF not found.")
+                
+        return  # Exit function to show only comparison view
+
+    # --- STANDARD EDITOR VIEW ---
+    # Use a container to group the header elements and help with focus
+    with st.container():
+        st.markdown("---")
+        
+        # Display SAR Type Badge
+        sar_type = st.session_state.get('sar_type', 'Internal')
+        report_stage = st.session_state.get('sar_report_stage', 1)
+    
+        # Custom CSS for AI Assistant
+        st.markdown("""
+        <style>
+        .ai-chat-container {
+            background-color: #292B3D;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #333333;
+            margin-bottom: 20px;
+        }
+        .ai-msg-bubble {
+            background-color: #161B2F;
+            color: #E2E8F0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #00aeef;
+        }
+        .user-msg-bubble {
+            background-color: #00395d;
+            color: #FFFFFF;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: right;
+            border-right: 4px solid #e53e3e;
+        }
+        .empty-state-msg {
+            color: #979AA3;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            background-color: #161B2F;
+            border-radius: 8px;
+            border: 1px dashed #4A5568;
+        }
+        .stTextArea textarea {
+            background-color: #161B2F !important;
+            color: #FFFFFF !important;
+            border: 1px solid #4A5568 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+    # Stage Indicator
+    col_stage1, col_stage2 = st.columns(2)
+    with col_stage1:
+        if report_stage == 1:
+            st.markdown("Stage 1: Initial Report")
+            st.info("Review the initial SAR report and add any comments/edits")
+        else:
+            st.markdown("Stage 1: Complete")
+    with col_stage2:
+        if report_stage == 2:
+            st.markdown("Stage 2: Final Report with Edits")
+            st.markdown('<div style="background-color: #292B3D; color: #48bb78; padding: 10px; border-radius: 8px; font-weight: bold; text-align: center;">Final report incorporating your edits</div>', unsafe_allow_html=True)
+        else:
+            st.markdown("Stage 2: Pending")
+    
     if sar_type == "Internal":
         st.markdown("Internal SAR - Compliance Review")
     else:
@@ -542,87 +1152,190 @@ def display_sar_editor():
     c1, c2 = st.columns([2, 1])
     
     with c1:
-        st.markdown("### STR Draft Preview (FIU-IND Format)")
-        narrative_input = st.text_area(
-            "Review and Edit Report:",
-            value=st.session_state['generated_narrative'],
-            height=600
-        )
+        if report_stage == 1:
+            st.markdown("### STR Draft - Edit Initial Report")
+            st.info("📝 Review the initial report PDF preview and edit the text below. Click 'Save Changes' to update, then 'Generate Final Report' when ready.")
+            
+            # Two-column layout: PDF preview on left, editable text on right
+            pdf_col, edit_col = st.columns([1, 1])
+            
+            with pdf_col:
+                st.markdown("#### Initial Report Preview")
+                import base64
+                pdf_path_initial = "Fincen SAR formata also includes basic rules_BEFORECHANGES.pdf"
+                if os.path.exists(pdf_path_initial):
+                    with open(pdf_path_initial, "rb") as f:
+                        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                    st.markdown(f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="700" type="application/pdf"></iframe>', unsafe_allow_html=True)
+                else:
+                    st.warning("Initial report PDF preview not available.")
+            
+            with edit_col:
+                st.markdown("#### Edit Report Content")
+                # Editable text area for the initial report
+                narrative_input = st.text_area(
+                    "Review and Edit Report:",
+                    value=st.session_state['generated_narrative'],
+                    height=600,
+                    key="narrative_stage1_edit",
+                    help="Edit the report text directly. Your changes will be saved when you click 'Save Changes'.",
+                    label_visibility="collapsed"
+                )
+                
+                # Save Changes Button
+                if st.button("💾 Save Changes", use_container_width=True, key="save_narrative_btn"):
+                    st.session_state['generated_narrative'] = narrative_input
+                    
+                    # Log action
+                    audit_logger.log_event(f"{sar_type} SAR - Initial Report Edited", "Admin_User", {
+                        "customer_id": st.session_state['current_customer']['customer_id'],
+                        "sar_type": sar_type
+                    })
+                    
+                    st.success("✓ Changes saved!")
+                    time.sleep(0.5)
+                    st.rerun()
+                
+                st.caption("💡 Save your changes before generating the final report")
+            
+            # Divider
+            st.markdown("---")
+            
+            # Optional: AI Assistant for refinement
+            st.markdown("### AI Assistant - Refine Report")
+            st.caption("Use AI to help improve specific sections of your report")
+            
+            # Chat Input Area with Generate Button side-by-side
+            input_col1, input_col2 = st.columns([4, 1])
+            
+            with input_col1:
+                edit_comments = st.text_area(
+                    "Message AI Assistant...",
+                    value=st.session_state.get('sar_edit_comments', ''),
+                    height=100,
+                    placeholder="Enter specific edit instructions for AI assistance (optional)...",
+                    label_visibility="collapsed",
+                    key="edit_comments_input"
+                )
+            
+            with input_col2:
+                st.markdown("<br>", unsafe_allow_html=True) # Spacing alignment
+                if st.button("Generate\nFinal Report", type="primary", use_container_width=True, key="proceed_to_stage2"):
+                    # Save edit comments and move to stage 2
+                    st.session_state['sar_edit_comments'] = edit_comments
+                    st.session_state['sar_report_stage'] = 2
+                    
+                    # The edited narrative is already in session state from the save button
+                    # or we can save it here as well to ensure it's captured
+                    st.session_state['generated_narrative'] = narrative_input
+                    
+                    # Log action
+                    audit_logger.log_event(f"{sar_type} SAR - Proceeded to Final Report", "Admin_User", {
+                        "customer_id": st.session_state['current_customer']['customer_id'],
+                        "sar_type": sar_type,
+                        "has_edits": bool(edit_comments.strip())
+                    })
+                    
+                    st.success("Generating Final Report...")
+                    st.rerun()
+            
+            
+        
+        else:  # Stage 2
+
+
+            st.markdown("### STR Final Report (Edited Version)")
+            st.success("✓ This is your final edited report ready for submission")
+            
+            # Display the edited narrative (read-only)
+            final_narrative = st.session_state['generated_narrative']
+            
+            # Show the final report in a text area (disabled for read-only)
+            st.text_area(
+                "Final Report Content:",
+                value=final_narrative,
+                height=600,
+                key="narrative_stage2_display",
+                disabled=True,
+                help="This is the final version of your edited report. Use the actions panel to download, share, or file the report."
+            )
+            
+            # Show AI assistant comments if any were added
+            if st.session_state.get('sar_edit_comments'):
+                st.markdown("---")
+                st.markdown("### AI Assistant Comments")
+                st.info(st.session_state['sar_edit_comments'])
+
+
+
         
     with c2:
         st.markdown("### Actions")
         
-        # Save Draft with PDF Export (available for both types)
-        if st.button("Save Draft as PDF", use_container_width=True, key="save_draft_pdf"):
-            from reportlab.lib.pagesizes import letter
-            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-            from reportlab.lib.units import inch
-            from io import BytesIO
-            from datetime import datetime
+        # Stage-specific actions
+       
             
-            # Update session state
-            st.session_state['generated_narrative'] = narrative_input
+        # Stage-specific actions
+        if report_stage == 1:
+            # Stage 1: Actions
+            st.info("Use the AI Assistant chat on the left to refine the report.")
+        
+        else:  # Stage 2
             
-            # Create PDF
-            buffer = BytesIO()
-            doc = SimpleDocTemplate(buffer, pagesize=letter)
-            story = []
-            styles = getSampleStyleSheet()
+        
+          
+            # COMPARE BUTTON
+            if st.button("Compare Initial vs Final", use_container_width=True, key="comp_btn"):
+                st.session_state['view_comparison_mode'] = True
+                st.rerun()
             
-            # Title
-            title_style = ParagraphStyle(
-                'CustomTitle',
-                parent=styles['Heading1'],
-                fontSize=16,
-                textColor='#000000',
-                spaceAfter=30
-            )
-            story.append(Paragraph(f"Suspicious Transaction Report (STR) - {sar_type}", title_style))
-            story.append(Spacer(1, 0.2*inch))
+            # Stage 2: Button to go back to initial report
+            if st.button("← Back to Initial Report", use_container_width=True, key="back_to_stage1"):
+                st.session_state['sar_report_stage'] = 1
+                st.rerun()
             
-            # Customer Details
-            if st.session_state.get('current_customer'):
-                customer = st.session_state['current_customer']
-                story.append(Paragraph(f"<b>Customer Name:</b> {customer['name']}", styles['Normal']))
-                story.append(Paragraph(f"<b>Customer ID:</b> {customer['customer_id']}", styles['Normal']))
-                story.append(Paragraph(f"<b>Risk Rating:</b> {customer['risk_rating']}", styles['Normal']))
-                story.append(Paragraph(f"<b>SAR Type:</b> {sar_type}", styles['Normal']))
-                story.append(Spacer(1, 0.3*inch))
-            
-            # Narrative
-            story.append(Paragraph("<b>Narrative:</b>", styles['Heading2']))
-            story.append(Spacer(1, 0.1*inch))
-            
-            # Split narrative into paragraphs
-            for para in narrative_input.split('\n\n'):
-                if para.strip():
-                    story.append(Paragraph(para.replace('\n', '<br/>'), styles['Normal']))
-                    story.append(Spacer(1, 0.1*inch))
-            
-            # Footer
-            story.append(Spacer(1, 0.5*inch))
-            story.append(Paragraph(f"<i>Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</i>", styles['Normal']))
-            
-            doc.build(story)
-            buffer.seek(0)
-            
-            # Log action
-            audit_logger.log_event(f"{sar_type} SAR Draft Saved", "Admin_User", {
-                "customer_id": st.session_state['current_customer']['customer_id'],
-                "sar_type": sar_type,
-                "format": "PDF"
-            })
+            st.markdown("---")
+        
+        # Save Draft with PDF Export (available for both stages)
+        pdf_label = "Download Initial Report PDF" if report_stage == 1 else "Download Final Report PDF"
+        
+        # Determine which PDF template to use
+        if report_stage == 1:
+            pdf_template_path = "Fincen SAR formata also includes basic rules_BEFORECHANGES.pdf"
+        else:
+            pdf_template_path = "Fincen SAR formata also includes basic rules_afterChangesFinal.pdf"
+        
+        if os.path.exists(pdf_template_path):
+            # Read the PDF file
+            with open(pdf_template_path, "rb") as pdf_file:
+                pdf_bytes = pdf_file.read()
             
             # Download button
+            from datetime import datetime
+            customer_id = st.session_state['current_customer']['customer_id'] if st.session_state.get('current_customer') else "UNKNOWN"
+            stage_label = "Initial" if report_stage == 1 else "Final"
+            filename = f"STR_{stage_label}_Report_{customer_id}_{datetime.now().strftime('%Y%m%d')}.pdf"
+            
             st.download_button(
-                label="Download PDF",
-                data=buffer,
-                file_name=f"STR_{sar_type}_Draft_{st.session_state['current_customer']['customer_id']}_{datetime.now().strftime('%Y%m%d')}.pdf",
+                label=pdf_label,
+                data=pdf_bytes,
+                file_name=filename,
                 mime="application/pdf",
-                use_container_width=True
+                use_container_width=True,
+                key=f"download_pdf_stage{report_stage}"
             )
-            st.success("Draft saved as PDF!")
+            
+            # Log action
+            if st.session_state.get('current_customer'):
+                audit_logger.log_event(f"{sar_type} SAR {stage_label} Report Downloaded", "Admin_User", {
+                    "customer_id": customer_id,
+                    "sar_type": sar_type,
+                    "stage": report_stage,
+                    "format": "PDF"
+                })
+        else:
+            st.error(f"PDF template not found: {pdf_template_path}")
+
         
         # Share SAR Button
         if st.button("Generate Share Link", use_container_width=True, key="share_sar"):
@@ -635,9 +1348,30 @@ def display_sar_editor():
             unique_string = f"{customer_id}_{timestamp}_{sar_type}"
             share_id = hashlib.md5(unique_string.encode()).hexdigest()[:12]
             
-            # Generate shareable link (in production, this would be a real URL)
-            base_url = "https://sar-system.example.com/shared"
-            share_link = f"{base_url}/{share_id}"
+            # Create shared_reports directory if it doesn't exist
+            shared_reports_dir = "data/shared_reports"
+            os.makedirs(shared_reports_dir, exist_ok=True)
+            
+            # Save report data to JSON file
+            share_data = {
+                'share_id': share_id,
+                'customer': st.session_state['current_customer'],
+                'narrative': st.session_state['generated_narrative'],
+                'audit_trace': st.session_state['audit_trace'],
+                'sar_type': st.session_state['sar_type'],
+                'sar_status': st.session_state['sar_status'],
+                'report_stage': st.session_state['sar_report_stage'],
+                'edit_comments': st.session_state.get('sar_edit_comments', ''),
+                'created_at': timestamp
+            }
+            
+            share_file_path = os.path.join(shared_reports_dir, f"{share_id}.json")
+            with open(share_file_path, 'w') as f:
+                json.dump(share_data, f, indent=2)
+            
+            # Generate real shareable link with query parameter
+            # Get the current URL (works for both localhost and deployed)
+            share_link = f"http://localhost:8501/?share_id={share_id}"
             
             # Store in session state
             st.session_state['share_link'] = share_link
@@ -654,9 +1388,18 @@ def display_sar_editor():
         
         # Display share link if generated
         if 'share_link' in st.session_state and st.session_state.get('share_link'):
-            st.info("**Shareable Link:**")
+            st.markdown("""
+                <div class="info-card" style="background-color: #1a2332; border-left: 4px solid #48bb78;">
+                    <div style="font-weight: 600; color: #48bb78; margin-bottom: 8px;">✓ Shareable Link Generated</div>
+                    <div style="color: #979AA3; font-size: 0.9em; margin-bottom: 12px;">
+                        Copy this link to share the SAR report. It will open in a new tab.
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
             st.code(st.session_state['share_link'], language=None)
-            st.caption("Copy this link to share the SAR report with authorized personnel.")
+            
+            # Add a button to copy to clipboard (visual only, user still needs to copy manually)
+            st.caption("💡 Tip: Click the link to test it in a new tab, or copy it to share with others.")
 
         
         st.markdown("---")
@@ -708,12 +1451,169 @@ def display_sar_editor():
 
 def audit_page():
     st.title("Audit Logs")
+    st.markdown("Complete audit trail of all system activities")
+    
     logs = audit_logger.get_logs()
     if logs:
-        st.dataframe(pd.DataFrame(logs), use_container_width=True)
-        st.download_button("Download JSON", data=json.dumps(logs, indent=4), file_name="audit_log.json")
+        # Convert to DataFrame for better display
+        df_logs = pd.DataFrame(logs)
+        
+        # Format timestamp for better readability
+        if 'timestamp' in df_logs.columns:
+            df_logs['timestamp'] = pd.to_datetime(df_logs['timestamp'])
+            df_logs['formatted_time'] = df_logs['timestamp'].dt.strftime('%Y-%m-%d %H:%M:%S')
+            
+            # Reorder columns for better display
+            display_cols = ['formatted_time', 'event_type', 'user', 'details']
+            df_logs = df_logs[display_cols]
+            df_logs.columns = ['Timestamp', 'Event Type', 'User', 'Details']
+        
+        # Display statistics
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Total Events", len(logs))
+        with col2:
+            event_types = df_logs['Event Type'].nunique() if 'Event Type' in df_logs.columns else 0
+            st.metric("Event Types", event_types)
+        with col3:
+            # Get most recent event time
+            if 'Timestamp' in df_logs.columns:
+                latest = df_logs['Timestamp'].iloc[-1] if len(df_logs) > 0 else "N/A"
+                st.metric("Latest Event", latest)
+        
+        st.markdown("---")
+        
+        # Filter by event type
+        if 'Event Type' in df_logs.columns:
+            event_types_list = ['All'] + sorted(df_logs['Event Type'].unique().tolist())
+            selected_event = st.selectbox("Filter by Event Type", event_types_list)
+            
+            if selected_event != 'All':
+                df_logs = df_logs[df_logs['Event Type'] == selected_event]
+        
+        # Display logs in reverse chronological order (newest first)
+        st.dataframe(df_logs.iloc[::-1], use_container_width=True, hide_index=True)
+        
+        # Download buttons
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # JSON Download
+            st.download_button(
+                "Download as JSON", 
+                data=json.dumps(logs, indent=4), 
+                file_name=f"audit_log_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json",
+                mime="application/json",
+                use_container_width=True
+            )
+        
+        with col2:
+            # PDF Download
+            if st.button("Generate PDF", use_container_width=True):
+                from reportlab.lib.pagesizes import letter, landscape
+                from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak, Image
+                from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+                from reportlab.lib.units import inch
+                from reportlab.lib import colors
+                from io import BytesIO
+                import os
+                
+                # Create PDF
+                buffer = BytesIO()
+                doc = SimpleDocTemplate(buffer, pagesize=landscape(letter), topMargin=0.5*inch, bottomMargin=0.5*inch)
+                story = []
+                styles = getSampleStyleSheet()
+                
+                # Add logo if it exists
+                logo_path = None
+                if os.path.exists("logo.png"):
+                    logo_path = "logo.png"
+                elif os.path.exists("logo.jpg"):
+                    logo_path = "logo.jpg"
+                
+                if logo_path:
+                    try:
+                        logo = Image(logo_path, width=3*inch, height=1.5*inch)
+                        logo.hAlign = 'CENTER'
+                        story.append(logo)
+                        story.append(Spacer(1, 0.2*inch))
+                    except:
+                        pass  # If logo fails to load, continue without it
+                
+                # Title
+                title_style = ParagraphStyle(
+                    'CustomTitle',
+                    parent=styles['Heading1'],
+                    fontSize=18,
+                    textColor=colors.HexColor('#00395d'),
+                    spaceAfter=20,
+                    alignment=1  # Center
+                )
+                story.append(Paragraph("Audit Log Report", title_style))
+                story.append(Paragraph(f"Generated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}", styles['Normal']))
+                story.append(Spacer(1, 0.3*inch))
+
+                
+                # Summary statistics
+                summary_style = ParagraphStyle('Summary', parent=styles['Normal'], fontSize=10, spaceAfter=10)
+                story.append(Paragraph(f"<b>Total Events:</b> {len(logs)} | <b>Event Types:</b> {event_types} | <b>Latest Event:</b> {latest}", summary_style))
+                story.append(Spacer(1, 0.2*inch))
+                
+                # Prepare table data
+                table_data = [['Timestamp', 'Event Type', 'User', 'Details']]
+                
+                # Add log entries (reverse chronological)
+                for _, row in df_logs.iloc[::-1].iterrows():
+                    details_str = str(row['Details'])
+                    if len(details_str) > 100:
+                        details_str = details_str[:97] + "..."
+                    
+                    table_data.append([
+                        str(row['Timestamp']),
+                        str(row['Event Type']),
+                        str(row['User']),
+                        details_str
+                    ])
+                
+                # Create table
+                table = Table(table_data, colWidths=[1.8*inch, 2*inch, 1.2*inch, 4*inch])
+                table.setStyle(TableStyle([
+                    # Header styling
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#00395d')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 10),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    
+                    # Data rows styling
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                    ('FONTSIZE', (0, 1), (-1, -1), 8),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+                ]))
+                
+                story.append(table)
+                
+                # Build PDF
+                doc.build(story)
+                buffer.seek(0)
+                
+                # Download button for PDF
+                st.download_button(
+                    label="Download PDF",
+                    data=buffer,
+                    file_name=f"audit_log_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+                st.success("PDF generated successfully!")
     else:
-        st.info("No logs found.")
+        st.info("No audit logs found. Logs will appear here as users perform actions in the system.")
+
 
 # --- Navigation ---
 if os.path.exists("logo.jpg"):
