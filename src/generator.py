@@ -7,7 +7,7 @@ class SARGenerator:
 
     def generate(self, customer_data, transactions):
         """
-        Generates a Suspicious Transaction Report (STR) based on FIU-IND format.
+        Generates a Suspicious Activity Report (SAR) based on FinCEN format.
         Returns a dictionary with 'narrative_text' (the report) and 'audit_trace'.
         """
         
@@ -25,14 +25,14 @@ class SARGenerator:
         report_parts = []
         
         # --- PART 1: DETAILS OF REPORT ---
-        report_parts.append("SUSPICIOUS TRANSACTION REPORT (STR) - FIU-IND FORMAT")
+        report_parts.append("SUSPICIOUS ACTIVITY REPORT (SAR) - FinCEN FORMAT")
         report_parts.append("="*60)
         report_parts.append("PART 1: DETAILS OF REPORT")
         report_parts.append(f"1.1 Date of sending report: {datetime.now().strftime('%d/%m/%Y')}")
         report_parts.append("1.2 Replacement to earlier report? NO")
         report_parts.append("-" * 60)
         
-        audit_trace.append({"step": "Report Initialization", "source": "System Date", "reasoning": "Standard STR Header extraction."})
+        audit_trace.append({"step": "Report Initialization", "source": "System Date", "reasoning": "Standard SAR Header extraction."})
 
         # --- PART 2: DETAILS OF PRINCIPAL OFFICER ---
         report_parts.append("PART 2: DETAILS OF PRINCIPAL OFFICER")

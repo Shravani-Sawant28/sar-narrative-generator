@@ -77,7 +77,7 @@ st.markdown("""
         overflow: hidden;
         border: 1px solid #333333;
     }
-    /* Primary Button (Generate STR) - Red */
+    /* Primary Button (Generate SAR) - Red */
     div[data-testid="stButton"] button[kind="primary"] {
         background-color: #e53e3e !important;
         color: #FFFFFF !important;
@@ -102,7 +102,7 @@ st.markdown("""
     
     /* SAR Action Buttons - Extra Large Font */
     div[data-testid="stButton"] button:has-text("Save Draft as PDF"),
-    div[data-testid="stButton"] button:has-text("File with FIU-IND"),
+    div[data-testid="stButton"] button:has-text("File with FinCEN"),
     div[data-testid="stButton"] button:has-text("Escalate to Regulatory SAR"),
     div[data-testid="stButton"] button:has-text("Dismiss Internal SAR") {
         font-size: 1.25rem !important;
@@ -333,7 +333,7 @@ def admin_dashboard():
             names='Risk Level', 
             hole=0.5,
             color='Risk Level',
-            color_discrete_map={'High': '#e53e3e', 'Medium': '#ed8936', 'Low': '#48bb78'}
+            color_discrete_map={'HIGH': '#e53e3e', 'MEDIUM': '#fbbf24', 'LOW': '#48bb78'}
         )
         fig_donut.update_layout(height=400, showlegend=True, legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
         st.plotly_chart(fig_donut, use_container_width=True)
@@ -893,25 +893,75 @@ def show_customer_details(customer_id):
         agg_txns = transactions.groupby([pd.Grouper(key='date', freq='Y'), 'type'])['amount'].sum().reset_index()
         date_format = "%Y"
     
-    fig_timeline = px.bar(
-        agg_txns, 
-        x='date', 
-        y='amount', 
-        color='type',
-        color_discrete_map={'Credit': '#48bb78', 'Debit': '#e53e3e'},
-        title=f"Transaction Flow ({txn_timeline})",
-        barmode='group'
-    )
-    fig_timeline.update_layout(
-        height=350,
-        xaxis_title=None,
-        yaxis_title="Amount",
-        xaxis=dict(tickformat=date_format, tickangle=-45),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#FFFFFF')
-    )
-    st.plotly_chart(fig_timeline, use_container_width=True)
+    # Create two columns for charts
+    chart_col1, chart_col2 = st.columns(2)
+    
+    with chart_col1:
+        st.markdown("#### Transaction Flow by Type")
+        fig_timeline = px.bar(
+            agg_txns, 
+            x='date', 
+            y='amount', 
+            color='type',
+            color_discrete_map={'Credit': '#48bb78', 'Debit': '#e53e3e'},
+            title=f"By Type ({txn_timeline})",
+            barmode='group'
+        )
+        fig_timeline.update_layout(
+            height=350,
+            xaxis_title=None,
+            yaxis_title="Amount",
+            xaxis=dict(tickformat=date_format, tickangle=-45),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='#FFFFFF')
+        )
+        st.plotly_chart(fig_timeline, use_container_width=True)
+    
+    with chart_col2:
+        st.markdown("#### Transaction Flow by Channel")
+        # Check if channel column exists
+        if 'channel' in transactions.columns:
+            # Aggregate by channel
+            if txn_timeline == "Day-wise":
+                agg_channel = transactions.groupby([pd.Grouper(key='date', freq='D'), 'channel'])['amount'].sum().reset_index()
+            elif txn_timeline == "Month-wise":
+                agg_channel = transactions.groupby([pd.Grouper(key='date', freq='M'), 'channel'])['amount'].sum().reset_index()
+            else:  # Year-wise
+                agg_channel = transactions.groupby([pd.Grouper(key='date', freq='Y'), 'channel'])['amount'].sum().reset_index()
+            
+            # Define contrasting colors for channels
+            channel_colors = {
+                'Wire': '#8b5cf6',      # Purple
+                'ATM': '#f59e0b',       # Orange
+                'Cash': '#10b981',      # Green
+                'Debit': '#3b82f6',     # Blue
+                'Credit': '#ec4899',    # Pink
+                'Online': '#06b6d4',    # Cyan
+                'Branch': '#84cc16'     # Lime
+            }
+            
+            fig_channel = px.bar(
+                agg_channel,
+                x='date',
+                y='amount',
+                color='channel',
+                color_discrete_map=channel_colors,
+                title=f"By Channel ({txn_timeline})",
+                barmode='stack'
+            )
+            fig_channel.update_layout(
+                height=350,
+                xaxis_title=None,
+                yaxis_title="Amount",
+                xaxis=dict(tickformat=date_format, tickangle=-45),
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#FFFFFF')
+            )
+            st.plotly_chart(fig_channel, use_container_width=True)
+        else:
+            st.info("Channel data not available for this customer")
     
     # === COMPREHENSIVE TRANSACTION DETAILS ===
     st.markdown("<br>", unsafe_allow_html=True)
@@ -967,7 +1017,7 @@ def show_customer_details(customer_id):
         "Choose report type:",
         [
             "Internal SAR (Preliminary Investigation)",
-            "Normal SAR (Regulatory Filing with FIU-IND)"
+            "Normal SAR (Regulatory Filing with FinCEN)"
         ],
         key=f"sar_type_radio_{customer_id}",
         label_visibility="collapsed"
@@ -996,7 +1046,7 @@ def show_customer_details(customer_id):
                     <div>
                         <div style="font-weight: 600; color: #e53e3e; margin-bottom: 4px;">Regulatory SAR</div>
                         <div style="color: #979AA3; font-size: 0.9em;">
-                            This report will be filed with FIU-IND. <strong style="color: #e53e3e;">DO NOT inform the customer (tipping off is illegal)</strong>.
+                            This report will be filed with FinCEN. <strong style="color: #e53e3e;">DO NOT inform the customer (tipping off is illegal)</strong>.
                         </div>
                     </div>
                 </div>
@@ -1005,8 +1055,8 @@ def show_customer_details(customer_id):
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    if st.button("Generate Suspicious Transaction Report (STR) ", key="gen_sar_btn", type="primary"):
-        with st.spinner("Analyzing patterns and compiling STR..."):
+    if st.button("Generate Suspicious Activity Report (SAR) ", key="gen_sar_btn", type="primary"):
+        with st.spinner("Analyzing patterns and compiling SAR..."):
             time.sleep(1.5)
             result = generator.generate(customer, transactions)
             st.session_state['generated_narrative'] = result['narrative_text']
@@ -1153,67 +1203,35 @@ def display_sar_editor():
     
     with c1:
         if report_stage == 1:
-            st.markdown("### STR Draft - Edit Initial Report")
-            st.info("📝 Review the initial report PDF preview and edit the text below. Click 'Save Changes' to update, then 'Generate Final Report' when ready.")
+            st.markdown("### Initial Report Preview")
+            st.info("📝 Review the initial report below. Enter your edit instructions in the AI Assistant section, then click 'Generate Final Report'.")
             
-            # Two-column layout: PDF preview on left, editable text on right
-            pdf_col, edit_col = st.columns([1, 1])
-            
-            with pdf_col:
-                st.markdown("#### Initial Report Preview")
-                import base64
-                pdf_path_initial = "Fincen SAR formata also includes basic rules_BEFORECHANGES.pdf"
-                if os.path.exists(pdf_path_initial):
-                    with open(pdf_path_initial, "rb") as f:
-                        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-                    st.markdown(f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="700" type="application/pdf"></iframe>', unsafe_allow_html=True)
-                else:
-                    st.warning("Initial report PDF preview not available.")
-            
-            with edit_col:
-                st.markdown("#### Edit Report Content")
-                # Editable text area for the initial report
-                narrative_input = st.text_area(
-                    "Review and Edit Report:",
-                    value=st.session_state['generated_narrative'],
-                    height=600,
-                    key="narrative_stage1_edit",
-                    help="Edit the report text directly. Your changes will be saved when you click 'Save Changes'.",
-                    label_visibility="collapsed"
-                )
-                
-                # Save Changes Button
-                if st.button("💾 Save Changes", use_container_width=True, key="save_narrative_btn"):
-                    st.session_state['generated_narrative'] = narrative_input
-                    
-                    # Log action
-                    audit_logger.log_event(f"{sar_type} SAR - Initial Report Edited", "Admin_User", {
-                        "customer_id": st.session_state['current_customer']['customer_id'],
-                        "sar_type": sar_type
-                    })
-                    
-                    st.success("✓ Changes saved!")
-                    time.sleep(0.5)
-                    st.rerun()
-                
-                st.caption("💡 Save your changes before generating the final report")
+            # Show Initial Report PDF Preview
+            import base64
+            pdf_path_initial = "Fincen SAR formata also includes basic rules_BEFORECHANGES.pdf"
+            if os.path.exists(pdf_path_initial):
+                with open(pdf_path_initial, "rb") as f:
+                    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                st.markdown(f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>', unsafe_allow_html=True)
+            else:
+                st.warning("Initial report PDF preview not available.")
             
             # Divider
             st.markdown("---")
             
-            # Optional: AI Assistant for refinement
-            st.markdown("### AI Assistant - Refine Report")
-            st.caption("Use AI to help improve specific sections of your report")
+            # AI Assistant for refinement
+            st.markdown("### AI Assistant - Edit Instructions")
+            st.caption("Enter your edit instructions below, then click 'Generate Final Report' to see the updated version")
             
             # Chat Input Area with Generate Button side-by-side
             input_col1, input_col2 = st.columns([4, 1])
             
             with input_col1:
                 edit_comments = st.text_area(
-                    "Message AI Assistant...",
+                    "Enter edit instructions...",
                     value=st.session_state.get('sar_edit_comments', ''),
-                    height=100,
-                    placeholder="Enter specific edit instructions for AI assistance (optional)...",
+                    height=150,
+                    placeholder="Enter specific edit instructions (e.g., 'Add more details about transaction patterns', 'Update risk assessment section')...",
                     label_visibility="collapsed",
                     key="edit_comments_input"
                 )
@@ -1224,10 +1242,6 @@ def display_sar_editor():
                     # Save edit comments and move to stage 2
                     st.session_state['sar_edit_comments'] = edit_comments
                     st.session_state['sar_report_stage'] = 2
-                    
-                    # The edited narrative is already in session state from the save button
-                    # or we can save it here as well to ensure it's captured
-                    st.session_state['generated_narrative'] = narrative_input
                     
                     # Log action
                     audit_logger.log_event(f"{sar_type} SAR - Proceeded to Final Report", "Admin_User", {
@@ -1242,29 +1256,142 @@ def display_sar_editor():
             
         
         else:  # Stage 2
-
-
-            st.markdown("### STR Final Report (Edited Version)")
+            st.markdown("### Final Report Preview")
             st.success("✓ This is your final edited report ready for submission")
             
-            # Display the edited narrative (read-only)
-            final_narrative = st.session_state['generated_narrative']
-            
-            # Show the final report in a text area (disabled for read-only)
-            st.text_area(
-                "Final Report Content:",
-                value=final_narrative,
-                height=600,
-                key="narrative_stage2_display",
-                disabled=True,
-                help="This is the final version of your edited report. Use the actions panel to download, share, or file the report."
-            )
+            # Show Final Report PDF Preview
+            import base64
+            pdf_path_final = "Fincen SAR formata also includes basic rules_afterChangesFinal.pdf"
+            if os.path.exists(pdf_path_final):
+                with open(pdf_path_final, "rb") as f:
+                    base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                st.markdown(f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="800" type="application/pdf"></iframe>', unsafe_allow_html=True)
+            else:
+                st.error("Final report PDF not found. Please ensure 'Fincen SAR formata also includes basic rules_afterChangesFinal.pdf' exists in the root folder.")
             
             # Show AI assistant comments if any were added
             if st.session_state.get('sar_edit_comments'):
                 st.markdown("---")
-                st.markdown("### AI Assistant Comments")
+                st.markdown("### Edit Instructions Applied")
                 st.info(st.session_state['sar_edit_comments'])
+            
+            # Explanation Section
+            st.markdown("---")
+            
+            # Initialize session state for explanation visibility
+            if 'show_explanation' not in st.session_state:
+                st.session_state['show_explanation'] = False
+            
+            # Explanation Button
+            if st.button("Show Explanation", use_container_width=True, key="show_explanation_btn"):
+                st.session_state['show_explanation'] = not st.session_state['show_explanation']
+                st.rerun()
+            
+            # Display explanation if button was clicked
+            if st.session_state.get('show_explanation', False):
+                st.markdown("### Report Explanation")
+                
+                # Hardcoded explanation text
+                explanation_text = """
+### 1 Why Structuring Was Selected
+
+**Pattern Identified:**
+- 19 cash deposits
+- Each below $10,000
+- Most between $9,850 – $9,990
+- Occurring within 72-hour clusters
+
+**CTR threshold under BSA = $10,000**
+
+Repeated $9,9xx deposits indicate threshold avoidance behavior.
+The probability of 19 consecutive deposits just under $10,000 occurring randomly is statistically low.
+
+---
+
+### 2 Why Multi-Branch Activity Increased Risk
+
+**Deposits occurred across:**
+- Downtown Chicago
+- West Loop
+- River North
+
+**AI Risk Insight:**
+Multi-branch usage suggests deliberate attempt to avoid detection clustering.
+
+---
+
+### 3 Why International Wire Transfers Elevated Risk
+
+**On 04/15/24:**
+Two outgoing wires totaling $120,000 to Estonia.
+
+**Risk factors:**
+- Cross-border transfer
+- Beneficiary country with higher AML monitoring sensitivity
+- No invoice provided
+- Cash-funded account
+
+**AI Interpretation:**
+Cash → Structuring → Rapid International Transfer
+
+This matches classic **placement → layering** pattern.
+
+---
+
+### 4 Why SAR Threshold Is Met (Regulatory Basis)
+
+**Under 31 U.S.C. §5318(g):**
+A SAR must be filed if:
+- Suspicious activity ≥ $5,000
+- Institution suspects BSA evasion
+
+**Here:**
+- Total structured cash = $148,750
+- Clearly above minimum threshold.
+
+---
+
+### 5️ Why No Financial Loss Reported
+
+This case is **not fraud against the bank**.
+- Funds belong to customer.
+- The issue is potential illegal origin or structuring behavior.
+
+**Therefore:**
+- Loss = $0.00
+- But compliance risk = **High**.
+
+---
+
+### 6 Why Law Enforcement Escalation Was Recommended
+
+When total activity expanded to $312,400 across multiple accounts:
+
+**Risk Model Output:**
+- Aggregate suspicious volume doubled
+- Cross-account coordination detected
+- Structured deposits persisted after monitoring alert
+
+This indicates **intentional evasion** rather than misunderstanding.
+
+---
+
+### 7 Behavioral Risk Indicators Identified
+
+**AI behavioral markers:**
+- Round-number proximity deposits
+- Sequential day deposits
+- No business justification
+- High cash vs stated business profile
+- Immediate outbound wire transfer
+                """
+                
+                st.markdown(explanation_text)
+                
+                # Optional: Add a close button
+                if st.button("Hide Explanation", key="hide_explanation_btn"):
+                    st.session_state['show_explanation'] = False
+                    st.rerun()
 
 
 
@@ -1437,17 +1564,16 @@ def display_sar_editor():
             # Normal SAR Actions
             st.markdown("#### Regulatory Actions")
             
-            if st.button("File with FIU-IND", type="primary", use_container_width=True, key="file_fiu"):
+            if st.button("File with FinCEN", type="primary", use_container_width=True, key="file_fiu"):
                 st.session_state['sar_status'] = "Filed"
-                st.session_state['generated_narrative'] = narrative_input
                 
-                audit_logger.log_event("Normal SAR Filed with FIU-IND", "Admin_User", {
+                audit_logger.log_event("Normal SAR Filed with FinCEN", "Admin_User", {
                     "customer_id": st.session_state['current_customer']['customer_id'],
                     "sar_type": "Normal",
                     "status": "Filed"
                 })
                 
-                st.success("STR Filed Successfully with FIU-IND!")
+                st.success("SAR Filed Successfully with FinCEN!")
 
 def audit_page():
     st.title("Audit Logs")
