@@ -1183,7 +1183,6 @@ def display_sar_editor():
     with col_stage1:
         if report_stage == 1:
             st.markdown("Stage 1: Initial Report")
-            st.info("Review the initial SAR report and add any comments/edits")
         else:
             st.markdown("Stage 1: Complete")
     with col_stage2:
@@ -1204,7 +1203,6 @@ def display_sar_editor():
     with c1:
         if report_stage == 1:
             st.markdown("### Initial Report Preview")
-            st.info("📝 Review the initial report below. Enter your edit instructions in the AI Assistant section, then click 'Generate Final Report'.")
             
             # Show Initial Report PDF Preview
             import base64
@@ -1221,7 +1219,6 @@ def display_sar_editor():
             
             # AI Assistant for refinement
             st.markdown("### AI Assistant - Edit Instructions")
-            st.caption("Enter your edit instructions below, then click 'Generate Final Report' to see the updated version")
             
             # Chat Input Area with Generate Button side-by-side
             input_col1, input_col2 = st.columns([4, 1])
@@ -1405,7 +1402,7 @@ This indicates **intentional evasion** rather than misunderstanding.
         # Stage-specific actions
         if report_stage == 1:
             # Stage 1: Actions
-            st.info("Use the AI Assistant chat on the left to refine the report.")
+            pass
         
         else:  # Stage 2
             
@@ -1515,18 +1512,7 @@ This indicates **intentional evasion** rather than misunderstanding.
         
         # Display share link if generated
         if 'share_link' in st.session_state and st.session_state.get('share_link'):
-            st.markdown("""
-                <div class="info-card" style="background-color: #1a2332; border-left: 4px solid #48bb78;">
-                    <div style="font-weight: 600; color: #48bb78; margin-bottom: 8px;">✓ Shareable Link Generated</div>
-                    <div style="color: #979AA3; font-size: 0.9em; margin-bottom: 12px;">
-                        Copy this link to share the SAR report. It will open in a new tab.
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
             st.code(st.session_state['share_link'], language=None)
-            
-            # Add a button to copy to clipboard (visual only, user still needs to copy manually)
-            st.caption("💡 Tip: Click the link to test it in a new tab, or copy it to share with others.")
 
         
         st.markdown("---")
@@ -1539,7 +1525,6 @@ This indicates **intentional evasion** rather than misunderstanding.
             if st.button("Escalate to Regulatory SAR", type="primary", use_container_width=True, key="escalate_sar"):
                 st.session_state['sar_type'] = "Normal"
                 st.session_state['sar_status'] = "Escalated"
-                st.session_state['generated_narrative'] = narrative_input
                 
                 audit_logger.log_event("Internal SAR Escalated to Regulatory", "Admin_User", {
                     "customer_id": st.session_state['current_customer']['customer_id'],
@@ -1659,7 +1644,7 @@ def audit_page():
                 
                 if logo_path:
                     try:
-                        logo = Image(logo_path, width=3*inch, height=1.5*inch)
+                        logo = Image(logo_path, width=3*inch, height=1*inch)
                         logo.hAlign = 'CENTER'
                         story.append(logo)
                         story.append(Spacer(1, 0.2*inch))
