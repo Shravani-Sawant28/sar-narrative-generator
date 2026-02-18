@@ -4336,5 +4336,602 @@
             "stage": 2,
             "format": "PDF"
         }
+    },
+    {
+        "timestamp": "2026-02-18T18:48:41.927736",
+        "event_type": "Customer Profile Viewed",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0005",
+            "customer_name": "Customer_0005",
+            "risk_rating": "LOW",
+            "action": "View Profile"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T18:48:52.348358",
+        "event_type": "Internal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0005",
+            "sar_type": "Internal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T18:48:52.709973",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0005",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T18:48:55.404265",
+        "event_type": "Internal SAR - Proceeded to Final Report",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0005",
+            "sar_type": "Internal",
+            "has_edits": false
+        }
+    },
+    {
+        "timestamp": "2026-02-18T18:48:55.742345",
+        "event_type": "Internal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0005",
+            "sar_type": "Internal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T18:48:59.071909",
+        "event_type": "Internal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0005",
+            "sar_type": "Internal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T18:48:59.200553",
+        "event_type": "Internal SAR Escalated to Regulatory",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0005",
+            "previous_type": "Internal",
+            "new_type": "Normal"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T18:48:59.529793",
+        "event_type": "Normal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0005",
+            "sar_type": "Normal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:00.034572",
+        "event_type": "Customer Profile Viewed",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "customer_name": "Customer_0000",
+            "risk_rating": "LOW",
+            "action": "View Profile"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:08.617360",
+        "event_type": "Internal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Internal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:08.960207",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:17.157639",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:20.009107",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:20.127071",
+        "event_type": "Internal SAR Share Link Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Internal",
+            "share_id": "1f243d99f208"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:23.604917",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:23.717963",
+        "event_type": "Internal SAR Escalated to Regulatory",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "previous_type": "Internal",
+            "new_type": "Normal"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:23.954236",
+        "event_type": "Normal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Normal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:29.143712",
+        "event_type": "Normal SAR - Proceeded to Final Report",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Normal",
+            "has_edits": false
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:29.532231",
+        "event_type": "Normal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Normal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:38:34.712334",
+        "event_type": "Normal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0000",
+            "sar_type": "Normal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:39:18.823076",
+        "event_type": "Customer Profile Viewed",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "customer_name": "Customer_0003",
+            "risk_rating": "LOW",
+            "action": "View Profile"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:39:23.738855",
+        "event_type": "Internal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:39:23.985578",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:39:25.517681",
+        "event_type": "Internal SAR - Proceeded to Final Report",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "has_edits": false
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:39:25.754047",
+        "event_type": "Internal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:39:33.398377",
+        "event_type": "Internal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:39:33.525808",
+        "event_type": "Internal SAR Escalated to Regulatory",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "previous_type": "Internal",
+            "new_type": "Normal"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:39:33.712667",
+        "event_type": "Normal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Normal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:39:40.649007",
+        "event_type": "Normal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Normal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:55:56.046678",
+        "event_type": "Customer Profile Viewed",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0001",
+            "customer_name": "Customer_0001",
+            "risk_rating": "MEDIUM",
+            "action": "View Profile"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T20:57:36.822259",
+        "event_type": "Customer Profile Viewed",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0008",
+            "customer_name": "Customer_0008",
+            "risk_rating": "HIGH",
+            "action": "View Profile"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:02:01.485317",
+        "event_type": "Customer Profile Viewed",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0001",
+            "customer_name": "Customer_0001",
+            "risk_rating": "MEDIUM",
+            "action": "View Profile"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:19:50.972492",
+        "event_type": "Customer Profile Viewed",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "customer_name": "Customer_0003",
+            "risk_rating": "LOW",
+            "action": "View Profile"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:21:33.738518",
+        "event_type": "Internal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:21:34.079995",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:21:42.000730",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:21:42.136881",
+        "event_type": "Internal SAR Share Link Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "share_id": "e3818c607911"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:21:46.417432",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:21:46.548572",
+        "event_type": "Internal SAR Escalated to Regulatory",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "previous_type": "Internal",
+            "new_type": "Normal"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:21:46.875285",
+        "event_type": "Normal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0003",
+            "sar_type": "Normal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:32:36.434609",
+        "event_type": "Customer Profile Viewed",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "customer_name": "Customer_0022",
+            "risk_rating": "MEDIUM",
+            "action": "View Profile"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:33:49.317175",
+        "event_type": "Internal SAR Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Internal",
+            "status": "Generated"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:33:49.682791",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:02.391859",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:02.601500",
+        "event_type": "Internal SAR Share Link Generated",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Internal",
+            "share_id": "53a34d1c712e"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:15.894161",
+        "event_type": "Internal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Internal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:16.049355",
+        "event_type": "Internal SAR Escalated to Regulatory",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "previous_type": "Internal",
+            "new_type": "Normal"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:16.392618",
+        "event_type": "Normal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Normal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:30.482387",
+        "event_type": "Normal SAR Initial Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Normal",
+            "stage": 1,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:30.642535",
+        "event_type": "Normal SAR Filed with FinCEN",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Normal",
+            "status": "Filed"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:32.541364",
+        "event_type": "Normal SAR - Proceeded to Final Report",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Normal",
+            "has_edits": false
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:32.883018",
+        "event_type": "Normal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Normal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:34:57.859942",
+        "event_type": "Normal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Normal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:35:02.690604",
+        "event_type": "Normal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Normal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:35:17.269319",
+        "event_type": "Normal SAR Final Report Downloaded",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Normal",
+            "stage": 2,
+            "format": "PDF"
+        }
+    },
+    {
+        "timestamp": "2026-02-18T21:35:17.424935",
+        "event_type": "Normal SAR Filed with FinCEN",
+        "user": "Admin_User",
+        "details": {
+            "customer_id": "C0022",
+            "sar_type": "Normal",
+            "status": "Filed"
+        }
     }
 ]

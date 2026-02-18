@@ -32,7 +32,7 @@ Kindly fill in CAPITAL. Read the instructions before filling the form.
 PART 1
 PART 3
 PART 2
-SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+SUSPICIOUS TRANSACTION REPORT (SAR) FOR A  BANKING COMPANY
 SBA01
 NO YES
 D D M M
@@ -45,7 +45,7 @@ Y Y Y Y
 DO NOT FILL. FOR FIU-IND USE ONLY.
 (Refer to Instructions)
 FIU-IND Financial Intelligence Unit- India
-SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+SUSPICIOUS TRANSACTION REPORT (SAR) FOR A  BANKING COMPANY
 Page 2
 LIST OF INDIVIDUALS LINKED TO TRANSACTIONS
 Annexure
@@ -115,7 +115,7 @@ Tick a to confirm
 10B
 SBA02DO NOT FILL. FOR FIU-IND USE ONLY.
 FIU-IND Financial Intelligence Unit- India
-SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+SUSPICIOUS TRANSACTION REPORT (SAR) FOR A  BANKING COMPANY
 Page 3
 LIST OF ACCOUNTS  LINKED TO TRANSACTIONS
 Annexure
@@ -165,7 +165,7 @@ Tick a to confirm
 10C
 SBA03DO NOT FILL. FOR FIU-IND USE ONLY.
 FIU-IND Financial Intelligence Unit- India
-SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+SUSPICIOUS TRANSACTION REPORT (SAR) FOR A  BANKING COMPANY
 Page 4
 7.3 Grounds of Suspicion (continued from previous page)
 11
@@ -211,7 +211,7 @@ DATE
 Signature
 Name
 FIU-IND Financial Intelligence Unit- India
-SUSPICIOUS TRANSACTION REPORT (STR) FOR A  BANKING COMPANY
+SUSPICIOUS TRANSACTION REPORT (SAR) FOR A  BANKING COMPANY
         
 GENERAL INSTRUCTIONS
 The Prevention of Money Laundering Act 2002
@@ -293,9 +293,9 @@ INSTRUCTIONS
 1.1.   Date of sending report is the date on which the 
 principal officer sends the report to Director (FIU-IND).
 1.2.  Replacement report is a report submitted in 
-replacement of an earlier STR. When a replacement report is 
-submitted, date of submitting original STR may be 
-mentioned and the complete STR has to be submitted again. 
+replacement of an earlier SAR. When a replacement report is 
+submitted, date of submitting original SAR may be 
+mentioned and the complete SAR has to be submitted again. 
 Under the Prevention of Money Laundering Act  2002,  every 
 banking company shall furnish details of suspicious transactions 
 whether or not made in cash. 

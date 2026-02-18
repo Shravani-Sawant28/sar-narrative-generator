@@ -122,7 +122,20 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# --- Authentication Credentials ---
+USER_CREDENTIALS = {
+    "Analyst": {"username": "analyst", "password": "analyst123"},
+    "Supervisor": {"username": "supervisor", "password": "super123"},
+    "Compliance Officer": {"username": "compliance", "password": "compliance123"},
+}
+
 # Session State
+if 'authenticated' not in st.session_state:
+    st.session_state['authenticated'] = False
+if 'user_role' not in st.session_state:
+    st.session_state['user_role'] = None
+if 'username' not in st.session_state:
+    st.session_state['username'] = None
 if 'current_customer' not in st.session_state:
     st.session_state['current_customer'] = None
 if 'generated_narrative' not in st.session_state:
@@ -137,6 +150,82 @@ if 'sar_report_stage' not in st.session_state:
     st.session_state['sar_report_stage'] = 1  # 1 = Initial Report, 2 = Final Report with Edits
 if 'sar_edit_comments' not in st.session_state:
     st.session_state['sar_edit_comments'] = ""
+
+
+def login_page():
+    """Render a minimal, professional login page."""
+    st.markdown("""
+    <style>
+    .login-title {
+        text-align: center;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #FFFFFF;
+        margin-bottom: 2px;
+    }
+    .login-subtitle {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #979AA3;
+        margin-bottom: 24px;
+    }
+    /* hide sidebar on login page */
+    [data-testid="stSidebar"] { display: none; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Spacer
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Centred card
+    col_left, col_mid, col_right = st.columns([1.2, 1.6, 1.2])
+    with col_mid:
+        # Logo (centered, larger)
+        if os.path.exists("logo.jpg"):
+            import base64 as b64
+            with open("logo.jpg", "rb") as img_f:
+                logo_data = b64.b64encode(img_f.read()).decode()
+            st.markdown(
+                f'<div style="display:flex;justify-content:center;margin-bottom:10px;">'
+                f'<img src="data:image/jpeg;base64,{logo_data}" width="200" />'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+        elif os.path.exists("logo.png"):
+            import base64 as b64
+            with open("logo.png", "rb") as img_f:
+                logo_data = b64.b64encode(img_f.read()).decode()
+            st.markdown(
+                f'<div style="display:flex;justify-content:center;margin-bottom:10px;">'
+                f'<img src="data:image/png;base64,{logo_data}" width="200" />'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+
+        st.markdown("<div class='login-title'>SAR Narrative Generator</div>", unsafe_allow_html=True)
+        st.markdown("<div class='login-subtitle'>Advanced AML Monitoring System</div>", unsafe_allow_html=True)
+
+        # Form
+        role = st.selectbox("Access Level", list(USER_CREDENTIALS.keys()))
+        username = st.text_input("Username", placeholder="Enter your username")
+        password = st.text_input("Password", type="password", placeholder="Enter your password")
+
+        if st.button("Sign In", type="primary", use_container_width=True):
+            expected = USER_CREDENTIALS[role]
+            if username == expected["username"] and password == expected["password"]:
+                st.session_state['authenticated'] = True
+                st.session_state['user_role'] = role
+                st.session_state['username'] = username
+                st.rerun()
+            else:
+                st.error("Invalid username or password. Please try again.")
+
+        # Credentials reference
+        st.markdown("---")
+        with st.expander("View Login Credentials"):
+            for r, creds in USER_CREDENTIALS.items():
+                st.markdown(f"**{r}** — `{creds['username']}` / `{creds['password']}`")
+
 
 # Handle shared report URL parameters
 query_params = st.query_params
@@ -249,34 +338,34 @@ def admin_dashboard():
         fig_sar.add_trace(go.Bar(
             x=sar_data['date'],
             y=sar_data['sar_processed'],
-            name='STRs Processed',
+            name='SARs Processed',
             marker_color='#ffffff',
             marker_line_color='#002d4a',
             marker_line_width=1,
             text=sar_data['sar_processed'],
             textposition='outside',
             textfont=dict(size=10, color='#00aeef', family='Arial Black'),
-            hovertemplate='<b>STRs Processed</b><br>Date: %{x}<br>Count: %{y}<extra></extra>'
+            hovertemplate='<b>SARs Processed</b><br>Date: %{x}<br>Count: %{y}<extra></extra>'
         ))
         
         # Add SAR Disseminated bars (light blue)
         fig_sar.add_trace(go.Bar(
             x=sar_data['date'],
             y=sar_data['sar_disseminated'],
-            name='STRs Disseminated',
+            name='SARs Disseminated',
             marker_color='#00aeef',
             marker_line_color='#0088cc',
             marker_line_width=1,
             text=sar_data['sar_disseminated'],
             textposition='outside',
             textfont=dict(size=10, color='#00aeef', family='Arial Black'),
-            hovertemplate='<b>STRs Disseminated</b><br>Date: %{x}<br>Count: %{y}<extra></extra>'
+            hovertemplate='<b>SARs Disseminated</b><br>Date: %{x}<br>Count: %{y}<extra></extra>'
         ))
         
         # Update layout to match reference image style
         fig_sar.update_layout(
             title={
-                'text': f"Chart: {timeline_option.replace('-wise', '')} STRs Processed and Disseminated",
+                'text': f"Chart: {timeline_option.replace('-wise', '')} SARs Processed and Disseminated",
                 'x': 0.5,
                 'xanchor': 'center',
                 'y': 0.98,
@@ -285,7 +374,7 @@ def admin_dashboard():
             },
             height=500,
             xaxis_title="FINANCIAL YEAR" if timeline_option == "Year-wise" else "TIME PERIOD",
-            yaxis_title="NO.OF STRS",
+            yaxis_title="NO.OF SARS",
             xaxis=dict(
                 tickformat=date_format,
                 tickangle=-45,
@@ -963,6 +1052,221 @@ def show_customer_details(customer_id):
         else:
             st.info("Channel data not available for this customer")
     
+    # === TRANSACTION PATTERN NETWORK VISUALIZATION ===
+    st.markdown("""
+        <div class="section-header">
+            <div class="section-title">Transaction Pattern Visualization</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    if 'counterparty' in transactions.columns and not transactions.empty:
+        import plotly.graph_objects as go
+        import math
+
+        # Aggregate flows between customer and counterparties
+        flow_data = transactions.groupby(['counterparty', 'type']).agg(
+            total_amount=('amount', 'sum'),
+            txn_count=('transaction_id', 'count'),
+            channels=('channel', lambda x: ', '.join(x.unique())),
+            countries=('country_dest', lambda x: ', '.join(x.dropna().unique())) if 'country_dest' in transactions.columns else ('channel', lambda x: '')
+        ).reset_index()
+
+        # Get top counterparties by total volume
+        top_counterparties = transactions.groupby('counterparty')['amount'].sum().nlargest(12).index.tolist()
+        flow_data = flow_data[flow_data['counterparty'].isin(top_counterparties)]
+
+        if not flow_data.empty:
+            # Summary stats above the graph
+            total_inflow = flow_data[flow_data['type'] == 'Credit']['total_amount'].sum()
+            total_outflow = flow_data[flow_data['type'] == 'Debit']['total_amount'].sum()
+            total_volume = total_inflow + total_outflow
+            num_cp = len(top_counterparties)
+
+            stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
+            with stat_col1:
+                st.markdown(f"""
+                    <div style="background:#292B3D; padding:14px; border-radius:10px; border:1px solid #333333; text-align:center;">
+                        <div style="font-size:0.75rem; color:#979AA3; text-transform:uppercase; letter-spacing:0.5px;">Counterparties</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:#00aeef;">{num_cp}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            with stat_col2:
+                st.markdown(f"""
+                    <div style="background:#292B3D; padding:14px; border-radius:10px; border:1px solid #333333; text-align:center;">
+                        <div style="font-size:0.75rem; color:#979AA3; text-transform:uppercase; letter-spacing:0.5px;">Total Inflow</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:#48bb78;">{total_inflow:,.0f}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            with stat_col3:
+                st.markdown(f"""
+                    <div style="background:#292B3D; padding:14px; border-radius:10px; border:1px solid #333333; text-align:center;">
+                        <div style="font-size:0.75rem; color:#979AA3; text-transform:uppercase; letter-spacing:0.5px;">Total Outflow</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:#e53e3e;">{total_outflow:,.0f}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            with stat_col4:
+                st.markdown(f"""
+                    <div style="background:#292B3D; padding:14px; border-radius:10px; border:1px solid #333333; text-align:center;">
+                        <div style="font-size:0.75rem; color:#979AA3; text-transform:uppercase; letter-spacing:0.5px;">Total Volume</div>
+                        <div style="font-size:1.5rem; font-weight:700; color:#FFFFFF;">{total_volume:,.0f}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+
+            st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
+
+            # Build node positions — customer at center, counterparties in a circle
+            node_x = [0.0]
+            node_y = [0.0]
+            node_labels = [customer_id]
+            node_colors = ['#00aeef']
+            node_sizes = [55]
+            node_border_colors = ['rgba(0,174,239,0.3)']
+            node_border_sizes = [75]
+
+            radius = 1.2
+            for i, cp in enumerate(top_counterparties):
+                angle = 2 * math.pi * i / num_cp - math.pi / 2  # Start from top
+                node_x.append(radius * math.cos(angle))
+                node_y.append(radius * math.sin(angle))
+                node_labels.append(cp)
+                cp_credits = flow_data[(flow_data['counterparty'] == cp) & (flow_data['type'] == 'Credit')]['total_amount'].sum()
+                cp_debits = flow_data[(flow_data['counterparty'] == cp) & (flow_data['type'] == 'Debit')]['total_amount'].sum()
+                if cp_credits > cp_debits:
+                    node_colors.append('#48bb78')
+                    node_border_colors.append('rgba(72,187,120,0.2)')
+                else:
+                    node_colors.append('#e53e3e')
+                    node_border_colors.append('rgba(229,62,62,0.2)')
+                scaled = 22 + min(18, (cp_credits + cp_debits) / (transactions['amount'].sum() + 1) * 120)
+                node_sizes.append(scaled)
+                node_border_sizes.append(scaled + 14)
+
+            # Build edges with curves
+            edge_traces = []
+            arrow_annotations = []
+            max_amount = flow_data['total_amount'].max() if not flow_data.empty else 1
+
+            for _, row in flow_data.iterrows():
+                cp = row['counterparty']
+                if cp not in top_counterparties:
+                    continue
+                cp_idx = top_counterparties.index(cp) + 1
+
+                edge_color = 'rgba(72,187,120,0.6)' if row['type'] == 'Credit' else 'rgba(229,62,62,0.6)'
+                edge_width = 1.5 + (row['total_amount'] / max_amount) * 5
+
+                if row['type'] == 'Credit':
+                    x0, y0 = node_x[cp_idx], node_y[cp_idx]
+                    x1, y1 = node_x[0], node_y[0]
+                else:
+                    x0, y0 = node_x[0], node_y[0]
+                    x1, y1 = node_x[cp_idx], node_y[cp_idx]
+
+                # Curved edge using a control point offset perpendicular to the line
+                mx, my = (x0 + x1) / 2, (y0 + y1) / 2
+                dx, dy = x1 - x0, y1 - y0
+                length = math.sqrt(dx**2 + dy**2) + 0.001
+                # Perpendicular offset for curve
+                offset = 0.08
+                cx = mx + offset * (-dy / length)
+                cy = my + offset * (dx / length)
+
+                # Approximate curve with 3 segments
+                pts_x, pts_y = [], []
+                for t in [0, 0.25, 0.5, 0.75, 1.0]:
+                    bx = (1-t)**2 * x0 + 2*(1-t)*t * cx + t**2 * x1
+                    by = (1-t)**2 * y0 + 2*(1-t)*t * cy + t**2 * y1
+                    pts_x.append(bx)
+                    pts_y.append(by)
+                pts_x.append(None)
+                pts_y.append(None)
+
+                edge_traces.append(go.Scatter(
+                    x=pts_x, y=pts_y,
+                    mode='lines',
+                    line=dict(width=edge_width, color=edge_color, shape='spline'),
+                    hoverinfo='text',
+                    text=f"<b>{row['type']}</b><br>Amount: {row['total_amount']:,.2f}<br>Transactions: {row['txn_count']}<br>Channels: {row['channels']}",
+                    showlegend=False
+                ))
+
+                # Arrow annotation at 70% along the curve
+                t = 0.7
+                ax_pt = (1-t)**2 * x0 + 2*(1-t)*t * cx + t**2 * x1
+                ay_pt = (1-t)**2 * y0 + 2*(1-t)*t * cy + t**2 * y1
+                t2 = 0.65
+                ax2 = (1-t2)**2 * x0 + 2*(1-t2)*t2 * cx + t2**2 * x1
+                ay2 = (1-t2)**2 * y0 + 2*(1-t2)*t2 * cy + t2**2 * y1
+                arrow_color = '#48bb78' if row['type'] == 'Credit' else '#e53e3e'
+                arrow_annotations.append(dict(
+                    x=ax_pt, y=ay_pt, ax=ax2, ay=ay2,
+                    xref='x', yref='y', axref='x', ayref='y',
+                    showarrow=True,
+                    arrowhead=3, arrowsize=1.5, arrowwidth=2,
+                    arrowcolor=arrow_color
+                ))
+
+            # Glow ring trace (behind the main nodes)
+            glow_trace = go.Scatter(
+                x=node_x, y=node_y,
+                mode='markers',
+                marker=dict(size=node_border_sizes, color=node_border_colors, line=dict(width=0)),
+                hoverinfo='skip',
+                showlegend=False
+            )
+
+            # Node hover text
+            node_hover = []
+            node_hover.append(f"<b>{customer_id}</b><br>Investigated Customer<br>Volume: {total_volume:,.2f}")
+            for i, cp in enumerate(top_counterparties):
+                cp_rows = flow_data[flow_data['counterparty'] == cp]
+                total = cp_rows['total_amount'].sum()
+                count = cp_rows['txn_count'].sum()
+                countries_str = ', '.join(cp_rows['countries'].unique()) if 'countries' in cp_rows.columns else ''
+                hover = f"<b>{cp}</b><br>Total: {total:,.2f}<br>Transactions: {count}"
+                if countries_str:
+                    hover += f"<br>Countries: {countries_str}"
+                node_hover.append(hover)
+
+            # Main node trace
+            node_trace = go.Scatter(
+                x=node_x, y=node_y,
+                mode='markers+text',
+                marker=dict(
+                    size=node_sizes,
+                    color=node_colors,
+                    line=dict(width=2, color='rgba(255,255,255,0.15)')
+                ),
+                text=node_labels,
+                textposition='top center',
+                textfont=dict(size=10, color='#FFFFFF', family='Arial'),
+                hoverinfo='text',
+                hovertext=node_hover,
+                showlegend=False
+            )
+
+            # Assemble figure
+            fig_network = go.Figure(data=edge_traces + [glow_trace, node_trace])
+            fig_network.update_layout(
+                height=520,
+                plot_bgcolor='#1a1d2e',
+                paper_bgcolor='#1a1d2e',
+                font=dict(color='#FFFFFF'),
+                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[-1.8, 1.8]),
+                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False, range=[-1.8, 1.8], scaleanchor='x'),
+                margin=dict(l=10, r=10, t=10, b=40),
+                annotations=arrow_annotations + [
+                    dict(text="<b>Green</b> = Inflow (Credit)  |  <b>Red</b> = Outflow (Debit)  |  Line thickness = Amount",
+                         xref="paper", yref="paper", x=0.5, y=-0.04,
+                         showarrow=False, font=dict(size=11, color='#979AA3'))
+                ]
+            )
+            st.plotly_chart(fig_network, use_container_width=True)
+        else:
+            st.info("Not enough counterparty data to generate pattern visualization.")
+    else:
+        st.info("Counterparty data not available for this customer.")
+
     # === COMPREHENSIVE TRANSACTION DETAILS ===
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -1549,7 +1853,7 @@ This indicates **intentional evasion** rather than misunderstanding.
             # Normal SAR Actions
             st.markdown("#### Regulatory Actions")
             
-            if st.button("File with FinCEN", type="primary", use_container_width=True, key="file_fiu"):
+            if st.button("Proceed for Review", type="primary", use_container_width=True, key="file_fiu"):
                 st.session_state['sar_status'] = "Filed"
                 
                 audit_logger.log_event("Normal SAR Filed with FinCEN", "Admin_User", {
@@ -1727,52 +2031,84 @@ def audit_page():
 
 
 # --- Navigation ---
-if os.path.exists("logo.jpg"):
-    st.sidebar.image("logo.jpg", width=150) # Authority Logo
-elif os.path.exists("logo.png"):
-    st.sidebar.image("logo.png", width=150)
-else:
-    # Placeholder or nothing if image missing
-    st.sidebar.markdown("Authority")
-st.sidebar.markdown("<h1 style='font-size: 2.2rem; margin-bottom: 0;'>SAR Generator</h1>", unsafe_allow_html=True)
-st.sidebar.markdown("<p style='font-size: 1.1rem; color: #E0E0E0; margin-top: 5px;'>Advanced AML Monitoring System</p>", unsafe_allow_html=True)
 
 def ai_assistant_page():
     st.title("AI Assistant")
     display_sar_editor()
 
-# Initialize navigation state
-if "nav_selection" not in st.session_state:
-    st.session_state["nav_selection"] = "Admin Dashboard"
-
-def update_nav():
-    st.session_state["nav_selection"] = st.session_state["nav_radio"]
-
-# Dynamic Sidebar Logic
-if st.session_state["nav_selection"] == "AI Assistant":
-    if st.sidebar.button("← Back to Dashboard"):
-        st.session_state["nav_selection"] = "User Management" # Return to source or default
-        st.rerun()
+if not st.session_state.get('authenticated', False):
+    login_page()
 else:
-    # Ensure current state is a valid radio option, else default to Admin Dashboard
-    current_index = 0
-    options = ["Admin Dashboard", "User Management", "Audit Logs"]
-    if st.session_state["nav_selection"] in options:
-        current_index = options.index(st.session_state["nav_selection"])
-        
-    page = st.sidebar.radio(
-        "Navigation", 
-        options,
-        key="nav_radio",
-        index=current_index,
-        on_change=update_nav
-    )
+    # Sidebar header
+    if os.path.exists("logo.jpg"):
+        st.sidebar.image("logo.jpg", width=150)
+    elif os.path.exists("logo.png"):
+        st.sidebar.image("logo.png", width=150)
+    else:
+        st.sidebar.markdown("Authority")
+    st.sidebar.markdown("<h1 style='font-size: 2.2rem; margin-bottom: 0;'>SAR Generator</h1>", unsafe_allow_html=True)
+    st.sidebar.markdown("<p style='font-size: 1.1rem; color: #E0E0E0; margin-top: 5px;'>Advanced AML Monitoring System</p>", unsafe_allow_html=True)
 
-if st.session_state["nav_selection"] == "Admin Dashboard":
-    admin_dashboard()
-elif st.session_state["nav_selection"] == "User Management":
-    user_management_page()
-elif st.session_state["nav_selection"] == "AI Assistant":
-    ai_assistant_page()
-elif st.session_state["nav_selection"] == "Audit Logs":
-    audit_page()
+    # Logged-in user info
+    st.sidebar.markdown("---")
+    st.sidebar.markdown(
+        f"<div style='background:#292B3D; padding:12px 16px; border-radius:10px; border:1px solid #333333;'>"
+        f"<span style='font-size:0.8rem; color:#979AA3; text-transform:uppercase; letter-spacing:0.5px;'>Logged in as</span><br>"
+        f"<span style='font-size:1.1rem; font-weight:600;'>{st.session_state['username']}</span><br>"
+        f"<span style='font-size:0.85rem; color:#00aeef;'>{st.session_state['user_role']}</span></div>",
+        unsafe_allow_html=True
+    )
+    if st.sidebar.button("Logout", use_container_width=True):
+        st.session_state['authenticated'] = False
+        st.session_state['user_role'] = None
+        st.session_state['username'] = None
+        st.rerun()
+
+    # Credentials reference
+    with st.sidebar.expander("Login Credentials"):
+        for r, creds in USER_CREDENTIALS.items():
+            st.markdown(
+                f"<div style='background:#292B3D; padding:10px 14px; border-radius:8px; border:1px solid #333333; margin-bottom:8px;'>"
+                f"<div style='font-size:0.85rem; font-weight:600; color:#FFFFFF; margin-bottom:4px;'>{r}</div>"
+                f"<div style='font-size:0.78rem; color:#979AA3;'>User: <span style='color:#00aeef;'>{creds['username']}</span></div>"
+                f"<div style='font-size:0.78rem; color:#979AA3;'>Pass: <span style='color:#00aeef;'>{creds['password']}</span></div>"
+                f"</div>",
+                unsafe_allow_html=True
+            )
+
+    st.sidebar.markdown("---")
+
+    # Initialize navigation state
+    if "nav_selection" not in st.session_state:
+        st.session_state["nav_selection"] = "Admin Dashboard"
+
+    def update_nav():
+        st.session_state["nav_selection"] = st.session_state["nav_radio"]
+
+    # Dynamic Sidebar Logic
+    if st.session_state["nav_selection"] == "AI Assistant":
+        if st.sidebar.button("← Back to Dashboard"):
+            st.session_state["nav_selection"] = "User Management"
+            st.rerun()
+    else:
+        current_index = 0
+        options = ["Admin Dashboard", "User Management", "Audit Logs"]
+        if st.session_state["nav_selection"] in options:
+            current_index = options.index(st.session_state["nav_selection"])
+
+        page = st.sidebar.radio(
+            "Navigation",
+            options,
+            key="nav_radio",
+            index=current_index,
+            on_change=update_nav
+        )
+
+    if st.session_state["nav_selection"] == "Admin Dashboard":
+        admin_dashboard()
+    elif st.session_state["nav_selection"] == "User Management":
+        user_management_page()
+    elif st.session_state["nav_selection"] == "AI Assistant":
+        ai_assistant_page()
+    elif st.session_state["nav_selection"] == "Audit Logs":
+        audit_page()

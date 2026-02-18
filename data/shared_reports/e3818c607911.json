@@ -1,0 +1,43 @@
+{
+  "share_id": "e3818c607911",
+  "customer": {
+    "customer_id": "C0003",
+    "name": "Customer_0003",
+    "risk_rating": "LOW",
+    "occupation": "SELF_EMPLOYED",
+    "kyc_status": "Verified",
+    "tenure_years": 2,
+    "account_opened": "2024-02-23",
+    "yearly_income": 40000,
+    "customer_segment": "RETAIL",
+    "country": "GB",
+    "credit_score": 306,
+    "is_pep": 0,
+    "is_fatf_black": 0,
+    "is_fatf_grey": 0,
+    "is_fca_high_risk": 0
+  },
+  "narrative": "SUSPICIOUS ACTIVITY REPORT (SAR) - FinCEN FORMAT\n============================================================\nPART 1: DETAILS OF REPORT\n1.1 Date of sending report: 18/02/2026\n1.2 Replacement to earlier report? NO\n------------------------------------------------------------\nPART 2: DETAILS OF PRINCIPAL OFFICER\n2.1 Name of Bank: HACK-O-HIRE BANK LTD\n2.5 Principal Officer: Mr. Ankit Sharma\n2.6 Designation: Chief Compliance Officer\n2.15 E-mail: compliance@hackohire.bank\n------------------------------------------------------------\nPART 3: DETAILS OF REPORTING BRANCH\n3.1 Name of Branch: Main Branch, Mumbai\n3.2 BSR Code: 1234567\n------------------------------------------------------------\nPART 4: LIST OF INDIVIDUALS LINKED TO TRANSACTIONS\nName: Customer_0003\nCustomer ID: C0003\nOccupation: SELF_EMPLOYED\nRisk Rating: LOW\n------------------------------------------------------------\nPART 7: DETAILS OF SUSPICIOUS TRANSACTION\n7.1 Reasons for suspicion:\n- Unexplained transfers between multiple accounts\n\n7.2 Grounds of Suspicion (Summary):\nThe account held by Customer_0003 (C0003) shows activity inconsistent with the declared profile of 'SELF_EMPLOYED'.\nUnusual transaction volume detected relative to historical average.\n------------------------------------------------------------\nPART 8: DETAILS OF ACTION TAKEN\n8.1 Action Taken: Account frozen, internal investigation initiated.\n------------------------------------------------------------",
+  "audit_trace": [
+    {
+      "step": "Report Initialization",
+      "source": "System Date",
+      "reasoning": "Standard SAR Header extraction."
+    },
+    {
+      "step": "Subject Identification",
+      "source": "Customer Profile",
+      "reasoning": "Extracted subject details for Part 4."
+    },
+    {
+      "step": "Conclusion",
+      "source": "System Logic",
+      "reasoning": "Generated standard action taken based on high-risk flag."
+    }
+  ],
+  "sar_type": "Internal",
+  "sar_status": "Draft",
+  "report_stage": 1,
+  "edit_comments": "",
+  "created_at": "20260218212142"
+}
