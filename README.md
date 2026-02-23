@@ -111,15 +111,3 @@ False Positive Rate	0.52%
 
 
 
-
-
-
-
-
-
-
-⚡ Real-time transaction monitoring
-
-📚 Continuous learning from analyst feedback
-
-🧠 Advanced anomaly detection models
